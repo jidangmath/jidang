@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지당 징검다리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Hahmlet:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* 레이아웃: 한 칸짜리 모바일 앱. 하늘빛 바탕에 흰 카드, 오늘의 돌과 보상은 해님 노랑으로 강조. 밝은 한 가지 테마. */
+:root{
+  --bg:#EEF9FB; --surface:#FFFFFF; --ink:#17323B; --muted:#58757E;
+  --water:#0A7F8F; --water-soft:#D6F2F5; --lamp:#FFC83D; --pop:#FF7A59; --line:#D5EAEE;
+  --e1:#BFD0D5; --e2:#86D4DC; --e3:#2FBFCC; --e4:#FFC83D;
+  --c0:#FF7A59; --c1:#FFC83D; --c2:#2FBFCC; --c3:#8E7CFF;
+  --display:'Jua','Hahmlet','Apple SD Gothic Neo',sans-serif;
+  --body:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background-color:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+body{min-height:100%;background-image:linear-gradient(180deg,#CFF0F4,#EEF9FB 280px);background-repeat:no-repeat}
+button,input,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:480px;margin:0 auto;padding:0 16px 104px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 0 8px}
+.brand{font-family:var(--display);font-size:24px;letter-spacing:.02em;color:var(--water)}
+.brand small{font-family:var(--body);font-size:13px;color:var(--muted);margin-left:8px;letter-spacing:0}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(10,127,143,.08)}
+.card h3{font-size:19px;margin-bottom:8px}
+.muted{color:var(--muted);font-size:14px}
+.tiny{font-size:13px;color:var(--muted)}
+.hero h1{font-size:30px}
+.hero .sub{color:var(--muted);margin-top:6px}
+label,.lab{display:block;font-weight:600;font-size:15px;margin-bottom:6px}
+input[type=text],input[type=number],textarea{width:100%;background:#F6FCFD;border:2px solid var(--line);border-radius:14px;padding:11px 12px;outline:none}
+textarea{resize:vertical;min-height:84px}
+input:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--lamp);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:999px;padding:12px 22px;font-weight:600;cursor:pointer;background:var(--water);color:#fff;min-height:48px;box-shadow:0 4px 0 rgba(10,60,70,.18)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(10,60,70,.18)}
+.btn.block{width:100%}
+.btn.ghost{background:#fff;color:var(--water);border:2px solid var(--water);box-shadow:none}
+.btn.lamp{background:var(--lamp);color:#2a1d02}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;color:var(--water);text-decoration:underline;cursor:pointer;padding:6px 0;font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:14px;cursor:pointer}
+.chip.on{background:var(--lamp);border-color:var(--lamp);color:#2a1d02;font-weight:600}
+.choice{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:18px;cursor:pointer;width:100%;box-shadow:0 6px 18px rgba(10,127,143,.08)}
+.choice b{font-family:var(--display);font-weight:400;font-size:21px}
+.choice span{color:var(--muted);font-size:14px}
+.choice:hover{border-color:var(--water)}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{margin:0;text-align:center;border:2px solid var(--line);border-radius:14px;padding:12px 8px;cursor:pointer;background:#fff;font-weight:500}
+.seg input:checked+label{border-color:var(--water);background:var(--water-soft);font-weight:600}
+.seg input:focus-visible+label{outline:3px solid var(--lamp);outline-offset:2px}
+.energy{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.energy input{position:absolute;opacity:0;pointer-events:none}
+.energy label{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid var(--line);border-radius:16px;padding:10px 4px;cursor:pointer;background:#fff;font-size:14px;font-weight:500}
+.energy label i{display:block;width:34px;height:24px;border-radius:50%}
+.energy .l1 i{background:var(--e1)}.energy .l2 i{background:var(--e2)}.energy .l3 i{background:var(--e3)}.energy .l4 i{background:var(--e4)}
+.energy input:checked+label{border-color:var(--ink);font-weight:600;background:#F6FCFD}
+.energy input:focus-visible+label{outline:3px solid var(--lamp);outline-offset:2px}
+.stepper{display:flex;gap:8px;align-items:center}
+.stepper button{width:48px;height:48px;border-radius:14px;border:2px solid var(--line);background:#fff;font-size:22px;cursor:pointer}
+.stepper input{text-align:center;font-size:22px;font-weight:600}
+.err{color:#D6362B;font-size:14px;min-height:20px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -6px 18px rgba(10,127,143,.07)}
+.nav div{max-width:480px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav button{background:none;border:0;padding:12px 0 10px;font-weight:500;color:var(--muted);cursor:pointer;border-top:4px solid transparent;font-size:14px}
+.nav button[aria-current=page]{color:var(--water);font-weight:600;border-top-color:var(--lamp)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;box-shadow:0 6px 18px rgba(10,127,143,.06)}
+.tile b{display:block;font-family:var(--display);font-weight:400;font-size:32px;line-height:1.2;font-variant-numeric:tabular-nums;color:var(--water)}
+.tile span{font-size:13px;color:var(--muted)}
+svg{display:block;width:100%;height:auto}
+.water{fill:var(--water-soft);opacity:.7}
+.path{stroke:var(--water);stroke-opacity:.35;stroke-width:2;stroke-dasharray:2 7;stroke-linecap:round;fill:none}
+.st text{font-size:11px;font-family:var(--body);text-anchor:middle;dominant-baseline:central;fill:var(--muted)}
+.st ellipse{fill:none}
+.s1 ellipse{fill:var(--e1)}.s2 ellipse{fill:var(--e2)}.s3 ellipse{fill:var(--e3)}.s4 ellipse{fill:var(--e4)}
+.s1 text,.s2 text,.s3 text,.s4 text{fill:#17323B;font-weight:600}
+.st.miss ellipse{stroke:var(--muted);stroke-opacity:.5;stroke-dasharray:3 4;stroke-width:1.5}
+.st.pre{opacity:.4}
+.st.pre ellipse{stroke:var(--line);stroke-width:1.5}
+.st.bridge ellipse{fill:#fff;stroke:var(--water);stroke-dasharray:4 3;stroke-width:1.8}
+.st.bridge text{fill:var(--water)}
+.st.today ellipse.ring{fill:none;stroke:var(--pop);stroke-width:3}
+.st.can{cursor:pointer}
+.st.can ellipse{stroke:var(--lamp);stroke-opacity:1;stroke-dasharray:none;stroke-width:2.5}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.bar{fill:var(--e2)}.bar.ok{fill:var(--e3)}
+.tl{stroke:var(--pop);stroke-width:2;stroke-dasharray:5 4}
+.lbl{font-size:10.5px;fill:var(--ink);font-family:var(--body);font-variant-numeric:tabular-nums}
+.lbl2{font-size:10.5px;fill:var(--muted);font-family:var(--body)}
+.cmp{display:grid;gap:10px}
+.cmp .card{padding:12px 14px;box-shadow:none;background:#F6FCFD}
+.cmp small{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+.cmp p{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.badge{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+.badge b{display:block;font-family:var(--display);font-weight:400;font-size:16px}
+.badge span{display:block;font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:2px}
+.bar2{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--e3);border-radius:4px}
+.badge .bar2{margin-top:8px;height:6px}
+.badge.got{border-color:var(--lamp);background:linear-gradient(180deg,#fff,#FFF6D6)}
+.badge.got .bar2 i{background:var(--lamp)}
+.pill{background:var(--water-soft);color:var(--water);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:600}
+.ms{margin:0}
+.ms.got{border-color:var(--lamp);background:linear-gradient(180deg,#fff,#FFF8DD)}
+.ms.got .pill{background:var(--lamp);color:#2a1d02}
+.ms.got .bar2 i{background:var(--lamp)}
+.lvl h2{font-size:30px}
+.lvl .bar2{margin-top:8px}
+.proof{margin-top:12px;border:2px dashed var(--pop);border-radius:18px;padding:14px;text-align:center;background:#FFF8F5}
+.proof h2{font-size:32px;color:var(--pop)}
+.mile{position:relative;overflow:hidden;text-align:center;background:linear-gradient(180deg,#fff,#FFF3C4)}
+.mile h2{font-size:24px}
+.confetti i{position:absolute;top:-14px;width:8px;height:13px;border-radius:2px;opacity:0;animation:fall 2.4s ease-in both}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(280px) rotate(540deg);opacity:0}}
+.drop{position:relative;height:120px;display:flex;align-items:center;justify-content:center}
+.drop .stone{width:74px;height:50px;border-radius:50%;background:var(--e3);animation:drop .7s cubic-bezier(.3,1.4,.5,1) both}
+.drop .r{position:absolute;width:74px;height:50px;border-radius:50%;border:3px solid var(--water);opacity:0;animation:ripple 1.4s .35s ease-out both}
+.drop .r2{animation-delay:.6s}
+@keyframes drop{from{transform:translateY(-70px) scale(1.25);opacity:0}to{transform:none;opacity:1}}
+@keyframes ripple{from{transform:scale(1);opacity:.8}to{transform:scale(2.6);opacity:0}}
+@media (prefers-reduced-motion: reduce){.drop .stone,.drop .r{animation:none}.drop .r,.confetti{display:none}}
+.skeleton{height:14px;border-radius:7px;background:var(--line);margin:8px 0;width:80%}
+.q{font-family:var(--display);font-size:18px;line-height:1.5}
+.check{display:grid;gap:8px;margin:10px 0}
+.check div{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:#F6FCFD;font-size:15px}
+.check .ok b{color:var(--water)}.check .no b{color:var(--muted);font-weight:500}
+.hint{background:#FFF3C4;border-radius:14px;padding:10px 12px;font-size:14px}
+.steps{display:flex;gap:6px;margin:6px 0 4px}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps i.on{background:var(--water)}
+.seed{border-left:6px solid var(--lamp)}
+details summary{cursor:pointer;font-weight:600}
+.pre-wrap{white-space:pre-wrap}
+
+.petcard{display:flex;gap:12px;align-items:center;background:linear-gradient(180deg,#fff,#E6F7F9)}
+.pet{width:112px;flex:none}
+.petcard .pet svg{animation:bob 2.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion: reduce){.petcard .pet svg{animation:none}}
+.bubble{position:relative;flex:1;background:#fff;border:2px solid var(--line);border-radius:18px;padding:10px 12px}
+.bubble:before{content:"";position:absolute;left:-9px;top:26px;width:14px;height:14px;background:#fff;border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.bubble small{color:var(--muted);font-size:12.5px;display:block}
+.bubble p{font-family:var(--display);font-size:17px;line-height:1.45}
+.pets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pets input{position:absolute;opacity:0;pointer-events:none}
+.pets label{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px;border:2px solid var(--line);border-radius:20px;background:#fff;padding:8px 4px;cursor:pointer;font-weight:600}
+.pets input:checked+label{border-color:var(--water);background:var(--water-soft)}
+.pets input:focus-visible+label{outline:3px solid var(--lamp);outline-offset:2px}
+.pets .pet{width:92px}
+.chip.lock{opacity:.65;border-style:dashed;cursor:default;font-size:12.5px}
+.friend .pet{width:150px;margin:0 auto}
+
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;cursor:pointer;margin-top:8px;font-weight:500}
+.opt:disabled{cursor:default}
+.opt.right{border-color:#2FA866;background:#E7F8EE;font-weight:600}
+.opt.wrong{border-color:#D6362B;background:#FDECEA;opacity:.85}
+.qtag{display:inline-block;background:var(--water-soft);color:var(--water);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:600}
+.learn{background:#FFF8DD;border-radius:14px;padding:12px 14px;margin-top:10px}
+.job{text-align:center}.job h2{font-size:30px}
+.btn3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn3 .btn{padding:12px 6px}
+
+.coupon{margin-top:12px;border:2px dashed var(--pop);border-radius:18px;padding:14px;text-align:center;background:#FFF8F5}
+.coupon h2{font-size:28px;color:var(--pop)}
+.coupon.used{opacity:.75;border-color:var(--muted);background:#F1F5F6}
+.coupon.used h2{color:var(--muted);text-decoration:line-through}
+.stamp{display:inline-block;margin-top:10px;border:3px solid var(--pop);color:var(--pop);border-radius:12px;padding:4px 14px;font-weight:700;transform:rotate(-4deg)}
+.coupon.used .stamp{border-color:var(--muted);color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<nav class="nav" id="nav" hidden aria-label="화면 이동"><div>
+  <button data-act="nav" data-v="today">오늘</button>
+  <button data-act="nav" data-v="change">변화</button>
+  <button data-act="nav" data-v="quest">퀘스트</button>
+  <button data-act="nav" data-v="reward">보상</button>
+  <button data-act="nav" data-v="goal">목표</button>
+</div></nav>
+
+<script>
+"use strict";
+/* ---------- 도우미 ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)};
+const diffDays=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const todayKey=()=>ymd(new Date());
+const hash=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+const kdate=k=>{const d=parse(k);return (d.getMonth()+1)+'월 '+d.getDate()+'일'};
+const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,j)=>setTimeout(()=>j(new Error('timeout')),ms))]);
+
+/* ---------- 상태와 저장 ---------- */
+const LS='jidang.v1';
+let S=null, view='today', ob=null, form=null, justSaved=null;
+const store={doc:null,sample:null,where:'기기'};
+const blank=()=>({v:1,nick:'',goal:null,goalHistory:[],entries:{},bridges:{},used:0,start:null,updated:0,rewards:{self:{},gotSelf:{},gotTeacher:{}}});
+let saveT=null, writing=false, dirty=false;
+function save(){
+  S.updated=Date.now();
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  dirty=true; clearTimeout(saveT); saveT=setTimeout(flush,500);
+}
+async function flush(){
+  if(!store.doc||writing||!dirty)return;
+  writing=true; dirty=false;
+  try{await store.doc.set(JSON.parse(JSON.stringify(S)))}catch(e){}
+  finally{writing=false; if(dirty)flush()}
+}
+async function init(){
+  try{S=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
+  S=Object.assign(blank(),S||{});
+  render();
+  try{
+    if(!window.claude||!claude.use)return;
+    const [db,user,sample]=await Promise.all([claude.use('db'),claude.use('user'),claude.use('sample')]);
+    store.sample=sample||null;
+    if(db&&user){
+      const id=await user.id();
+      if(id){
+        store.doc=db.collection('data/users/'+id).doc('jidang');
+        store.where='계정';
+        const snap=await withTimeout(store.doc.get(),8000);
+        if(snap.exists){
+          const remote=JSON.parse(JSON.stringify(snap.data()));
+          if(!S.goal||(remote.updated||0)>(S.updated||0))S=Object.assign(blank(),remote);
+          else {dirty=true;flush()}
+        }else if(S.goal){dirty=true;flush()}
+      }
+    }
+  }catch(e){}
+  if(!ob&&!form)render();
+}
+
+/* ---------- 계산 ---------- */
+const keys=()=>Object.keys(S.entries).sort();
+function dayset(){const o={};keys().forEach(k=>o[k]=1);Object.keys(S.bridges).forEach(k=>{if(!o[k])o[k]=2});return o}
+function streak(){const ds=dayset();let d=todayKey();if(!ds[d])d=addDays(d,-1);let n=0;while(ds[d]){n++;d=addDays(d,-1)}return n}
+function longest(){const ks=Object.keys(dayset()).sort();let best=0,cur=0,prev=null;for(const k of ks){cur=(prev&&diffDays(prev,k)===1)?cur+1:1;if(cur>best)best=cur;prev=k}return best}
+function comebacks(){const ks=keys();let n=0;for(let i=1;i<ks.length;i++)if(diffDays(ks[i-1],ks[i])>=2)n++;return n}
+const tickets=()=>1+Math.floor(keys().length/7)-S.used;
+const dayNum=(k)=>diffDays(S.start||todayKey(),k||todayKey())+1;
+const unit=()=>S.goal.type==='count'?(S.goal.unit||''):'';
+function total(){return keys().reduce((a,k)=>a+(Number(S.entries[k].val)||0),0)}
+function badges(){
+  const ks=keys(),n=ks.length,L=longest();
+  const done=ks.filter(k=>S.entries[k].done).length;
+  const notes=ks.filter(k=>(S.entries[k].note||'').trim().length>=20).length;
+  return [
+    {n:'첫 돌',d:'처음으로 오늘의 돌을 놓았어요',v:n,t:1},
+    {n:'사흘 연속',d:'3일을 이어서 건넜어요',v:L,t:3},
+    {n:'일주일 다리',d:'7일을 이어서 건넜어요',v:L,t:7},
+    {n:'다시 돌아온 날',d:'쉬었다가 다시 돌을 놓았어요',v:comebacks(),t:1},
+    {n:'약속 10번',d:'내가 정한 양을 10번 지켰어요',v:done,t:10},
+    {n:'내 글 10편',d:'스무 자 이상 쓴 날이 10번이에요',v:notes,t:10},
+    {n:'목표 고쳐 세우기',d:'목표를 스스로 다시 다듬었어요',v:Math.max(0,S.goalHistory.length-1),t:1},
+    {n:'한 달 다리',d:'30일 동안 돌을 놓았어요',v:n,t:30},
+    {n:'배움 10번',d:'퀘스트를 10번 마쳤어요',v:Q().stats.done,t:10},
+    {n:'꿈 탐험가',d:'직업 5개를 살펴봤어요',v:Object.keys(Q().jobs).length,t:5},
+    {n:'꿈을 적은 날',d:'나의 꿈을 글로 적었어요',v:(S.dream&&S.dream.text)?1:0,t:1}
+  ].map(b=>Object.assign(b,{got:b.v>=b.t}));
+}
+function avgEnergy(list){return list.reduce((a,k)=>a+S.entries[k].energy,0)/list.length}
+
+/* ---------- 보상 · 칭호 · 목표 후보 ---------- */
+// 교사 설정: 기록한 날(연속이 아니어도 됨)이 d번이 되면 열리는 선생님 보상
+const MILES=[{d:7,teacher:'선생님 칭찬 쪽지'},{d:30,teacher:'간식 쿠폰'},{d:50,teacher:'소원 쿠폰 1장'},{d:100,teacher:'문화상품권'}];
+const LEVELS=[{n:0,name:'출발선'},{n:1,name:'첫 발걸음'},{n:7,name:'물 위의 걸음'},{n:21,name:'습관의 싹'},{n:50,name:'반 고비를 넘은 사람'},{n:100,name:'백일의 다리'}];
+const SELF_IDEAS=['좋아하는 간식 먹기','영화 한 편 보기','가족과 외식','늦잠 자는 날','새 노트나 펜 사기','친구와 놀러 가기'];
+const level=n=>[...LEVELS].reverse().find(l=>n>=l.n);
+const nextLevel=n=>LEVELS.find(l=>l.n>n);
+const nextMile=n=>MILES.find(m=>m.d>n);
+const FEELS=['시작이 어려워요','금방 포기해요','뭘 해야 할지 모르겠어요','하고 싶은 건 있는데 막연해요'];
+// [목표, 방식, 단위, 하루 양, 이유]
+const SEEDS={
+ '공부':[['100일 동안 매일 수학 문제 5개 풀기','count','개',5,'작게 시작해야 오래 가요'],['100일 동안 매일 20분 책상에 앉아 공부하기','count','분',20,'앉는 습관부터 만들어요'],['100일 동안 매일 오늘 배운 것 한 줄 정리하기','check','',0,'기억에 남는 공부가 돼요'],['100일 동안 매일 단어 10개 외우기','count','개',10,'눈에 보이는 성과가 쌓여요'],['100일 동안 매일 오답 1개 다시 풀기','count','개',1,'실력이 가장 빨리 느는 방법이에요']],
+ '운동':[['100일 동안 매일 팔굽혀펴기 20개','count','개',20,'몸이 달라지는 게 보여요'],['100일 동안 매일 줄넘기 300번','count','번',300,'짧고 확실해요'],['100일 동안 매일 스트레칭 10분','count','분',10,'가볍게 시작하기 좋아요'],['100일 동안 매일 20분 걷기','count','분',20,'기분도 함께 좋아져요'],['100일 동안 매일 윗몸일으키기 15개','count','개',15,'기록이 늘어나는 재미가 있어요']],
+ '책읽기':[['100일 동안 매일 책 10쪽 읽기','count','쪽',10,'10쪽이면 부담이 적어요'],['100일 동안 매일 15분 책 읽기','count','분',15,'시간으로 정하면 쉬워요'],['100일 동안 책 읽고 한 줄 남기기','check','',0,'읽은 것이 내 것이 돼요'],['100일 동안 자기 전에 책 3쪽 읽기','count','쪽',3,'아주 작게 시작해요']],
+ '생활습관':[['100일 동안 밤 11시 전에 휴대폰 내려놓기','check','',0,'잠이 달라지면 하루가 달라져요'],['100일 동안 아침에 물 한 컵 마시기','check','',0,'1분이면 끝나요'],['100일 동안 아침에 이불 개기','check','',0,'하루의 첫 성공이 돼요'],['100일 동안 전날 밤 가방 챙기기','check','',0,'아침이 편해져요'],['100일 동안 같은 시각에 일어나기','check','',0,'몸의 리듬이 잡혀요']],
+ '마음':[['100일 동안 감사한 일 한 가지 쓰기','check','',0,'마음이 가벼워져요'],['100일 동안 매일 5분 조용히 숨 쉬기','count','분',5,'차분해지는 시간이에요'],['100일 동안 나를 칭찬하는 말 한 줄 쓰기','check','',0,'나를 응원하는 연습이에요'],['100일 동안 오늘 기분 한 줄 쓰기','check','',0,'내 마음을 알아가요']],
+ '관계':[['100일 동안 하루 한 사람에게 고맙다고 말하기','count','명',1,'관계가 따뜻해져요'],['100일 동안 가족과 10분 대화하기','count','분',10,'짧아도 쌓이면 커요'],['100일 동안 친구에게 안부 한 줄 보내기','check','',0,'작은 관심이 큰 힘이 돼요']],
+ '진로':[['100일 동안 하루 10분 관심 직업 알아보기','count','분',10,'꿈이 구체적으로 보여요'],['100일 동안 하고 싶은 일 한 줄 적기','check','',0,'생각이 정리돼요'],['100일 동안 하루 한 가지 새로운 것 시도하기','check','',0,'나를 더 알게 돼요']]
+};
+const AREAS=Object.keys(SEEDS);
+
+/* ---------- 캐릭터 ---------- */
+const SPNAME={frog:'개구리',turtle:'거북이',duck:'오리'};
+const DEFNAME={frog:'퐁이',turtle:'단단이',duck:'꽥이'};
+const STAGES=['아기','꼬마','씩씩이','영웅','전설'], STAGE_AT=[0,7,30,50,100];
+const stageOf=n=>STAGE_AT.reduce((a,v,i)=>n>=v?i:a,0);
+// 교사 설정: 쪽지 코드로 받는 선물 (코드는 바꿔서 쓰세요)
+const CODE_H=v=>'h'+hash('jd|'+v);
+const TEACHER_CODES={'h2219455575':'금별핀','h1647775334':'하트 볼터치'};
+const ITEMS=[
+ {id:'ribbon',slot:'head',name:'리본',badge:'첫 돌'},
+ {id:'hat',slot:'head',name:'모자',badge:'일주일 다리'},
+ {id:'flower',slot:'head',name:'꽃',badge:'다시 돌아온 날'},
+ {id:'phones',slot:'head',name:'헤드폰',badge:'내 글 10편'},
+ {id:'goldstar',slot:'head',name:'금별핀',code:'h2219455575'},
+ {id:'shades',slot:'face',name:'선글라스',badge:'사흘 연속'},
+ {id:'glasses',slot:'face',name:'동그란 안경',badge:'목표 고쳐 세우기'},
+ {id:'cap',slot:'head',name:'학사모',badge:'배움 10번'},
+ {id:'blush',slot:'face',name:'하트 볼터치',code:'h1647775334'}
+];
+const PAL={frog:['#7ED957','#4FAE35'],turtle:['#8FD6A8','#5E9E6B'],duck:['#FFD84D','#F0A800']};
+
+/* ---------- AI (없어도 앱은 동작) ---------- */
+const scrub=t=>String(t||'').replace(/0\d{1,2}[-.\s]?\d{3,4}[-.\s]?\d{4}/g,'(번호)').replace(/\S+@\S+\.\S+/g,'(메일)').slice(0,400);
+async function ask(prompt){
+  if(!store.sample)return null;
+  try{const r=await store.sample.json(prompt,{modelTier:'quick',cache:false});return (r&&typeof r==='object')?r:null}catch(e){return null}
+}
+const RULES='규칙: 학생의 글이나 목표를 대신 써 주지 않는다. 훈계, 과한 칭찬, 조언 목록을 쓰지 않는다. 학생이 스스로 생각하도록 질문한다. 존댓말, 따뜻하고 짧게. 학생 이름은 모른다. JSON만 출력한다.';
+function localCheck(g){
+  const t=g.replace(/\s/g,'');
+  return {specific:t.length>=12,measurable:/\d/.test(g),deadline:/(까지|동안|이내|주일|주간|개월|한 달|학기|방학|\d\s*월|\d\s*일)/.test(g)};
+}
+function localQuestion(c){
+  if(!c.specific)return '정확히 무엇을 하는 건가요? 눈에 보이는 행동으로 바꿔 쓰면 어떤 모습일까요?';
+  if(!c.measurable)return '하루에 얼마만큼 하면 "했다"고 말할 수 있나요? 숫자로 바꿔 볼까요?';
+  if(!c.deadline)return '언제까지 해 볼 건가요? 끝나는 날이 있으면 힘이 납니다.';
+  return '이 목표를 이루면 나는 지금과 어떻게 달라져 있을까요?';
+}
+async function checkGoal(g){
+  const clean=scrub(g);
+  const r=await ask(`너는 중학생이 스스로 목표를 세우도록 돕는 코치다. 학생이 쓴 목표: "${clean}"\n목표가 (1)구체적인 행동인지 (2)숫자로 셀 수 있는지 (3)기한이 있는지 판정하고, 학생이 스스로 답할 질문을 1개만 한다. ${RULES}\n형식: {"specific":true,"measurable":true,"deadline":true,"question":"40자 안팎 질문","tiny":"오늘 2분만 한다면 무엇을 할 수 있을지 묻는 질문 1개"}`);
+  if(r&&typeof r.question==='string')return {specific:!!r.specific,measurable:!!r.measurable,deadline:!!r.deadline,question:r.question,tiny:r.tiny||'오늘 2분만 한다면 무엇부터 할 수 있을까요?',ai:true};
+  const c=localCheck(g);
+  return Object.assign(c,{question:localQuestion(c),tiny:'오늘 2분만 한다면 무엇부터 할 수 있을까요?',ai:false});
+}
+async function getSeeds(area,feels,note,round){
+  const r=await ask(`너는 무기력하거나 목표가 막연한 중학생이 스스로 목표를 찾도록 돕는 코치다.\n학생이 끌리는 영역: ${area}\n학생의 마음: ${feels.join(', ')||'말하지 않음'}\n신경 쓰이는 것: "${scrub(note)}"\n학생이 고를 수 있는 목표 후보 3개를 제안한다. 조건: 100일 동안 매일 할 수 있을 만큼 작게 시작할 것, 구체적인 행동일 것, 숫자로 셀 수 있거나 했는지 체크할 수 있을 것, 서로 다른 방향일 것. ${round>1?'이전과는 다른 후보를 낸다. ':''}학생이 고르고 자기 말로 고치도록 돕는 질문도 1개 만든다. 훈계와 과한 칭찬은 하지 않는다. 존댓말, 따뜻하고 짧게. JSON만 출력한다.\n형식: {"seeds":[{"goal":"100일 동안 매일 ...","type":"count 또는 check","unit":"단위(check면 빈 문자열)","target":숫자(check면 0),"why":"이 목표가 좋은 이유 30자 이내"}],"question":"학생에게 하는 질문"}`);
+  if(r&&Array.isArray(r.seeds)){
+    const seeds=r.seeds.slice(0,3).map(x=>({goal:String(x.goal||'').slice(0,100),type:x.type==='check'?'check':'count',unit:String(x.unit||'').slice(0,6),target:Number(x.target)||0,why:String(x.why||'').slice(0,60)})).filter(x=>x.goal);
+    if(seeds.length)return {ai:true,seeds,question:String(r.question||'이 중에서 마음이 조금이라도 끌리는 것이 있나요?')};
+  }
+  const list=SEEDS[area]||SEEDS['생활습관'],off=(((round||1)-1)*3)%list.length;
+  const seeds=[0,1,2].map(i=>list[(off+i)%list.length]).map(([goal,type,unit,target,why])=>({goal,type,unit,target,why}));
+  return {ai:false,seeds,question:'이 중에서 마음이 조금이라도 끌리는 것이 있나요? 끌리는 이유를 생각해 보세요.'};
+}
+const FALLBACK_Q=['오늘 해 보니 어제와 달랐던 점이 하나 있다면 무엇일까요?','내일의 나에게 한 줄을 남긴다면 무엇을 쓰고 싶나요?','오늘 가장 하기 쉬웠던 순간은 언제였나요?','이 목표를 계속 하고 싶게 만드는 이유는 무엇인가요?','오늘 나를 도와준 것이 있었다면 무엇이었나요?'];
+async function feedback(day,e){
+  const sk=streak(),n=keys().length;
+  const r=await ask(`너는 중학생의 실천 기록을 읽는 다정한 코치다.\n목표: "${scrub(S.goal.text)}"\n오늘 기록: ${S.goal.type==='count'?`${e.val}${unit()} (약속한 양 ${S.goal.target||'-'}${unit()})`:(e.done?'했어요':'시작만 했어요')}, 에너지 ${e.energy}/4(1 방전, 4 충전), 느낀 점: "${scrub(e.note)}", 작은 승리: "${scrub(e.win)}"\n지금까지 연속 ${sk}일, 기록한 날 ${n}번.\n기록에 실제로 있는 구체적인 사실 1가지를 짚고(observe), 학생이 스스로 생각할 질문 1개(question)를 만든다. 에너지가 1이면 한 것 자체를 인정한다. ${RULES}\n형식: {"observe":"한 문장","question":"한 문장"}`);
+  if(r&&r.observe&&r.question)return {observe:String(r.observe),question:String(r.question),ai:true};
+  let o;
+  if(e.energy===1)o='에너지가 바닥인 날에도 돌을 놓았어요.';
+  else if(sk>=2)o=`${sk}일째 이어서 돌을 놓고 있어요.`;
+  else if(e.done)o='오늘 약속한 만큼 해냈어요.';
+  else o='목표에는 조금 못 미쳤지만, 시작한 것이 기록으로 남았어요.';
+  return {observe:o,question:FALLBACK_Q[hash(day)%FALLBACK_Q.length],ai:false};
+}
+
+/* ---------- 화면 ---------- */
+function render(){
+  const app=$('#app'),nav=$('#nav');
+  S.rewards=Object.assign({self:{},gotSelf:{},gotTeacher:{}},S.rewards||{});
+  if(!S.goal&&!ob)startOb(false);
+  if(ob){nav.hidden=true;app.innerHTML=headerBar()+renderOb();return}
+  nav.hidden=false;
+  nav.querySelectorAll('button').forEach(b=>b.setAttribute('aria-current',b.dataset.v===view?'page':'false'));
+  app.innerHTML=headerBar()+(view==='today'?viewToday():view==='change'?viewChange():view==='reward'?viewReward():view==='quest'?viewQuest():viewGoal());
+  if(view==='today'&&justSaved)loadFeedback();
+}
+const headerBar=()=>`<div class="top"><div class="brand">지당<small>오늘의 돌 하나</small></div></div>`;
+
+/* 시작하기 */
+function startOb(edit){
+  const g=S.goal||{},p=g.plan||{};
+  ob={step:edit?1:0,edit:!!edit,nick:S.nick||'',goal:g.text||'',type:g.type||'count',unit:g.unit||'',target:g.target||'',when:p.when||'',where:p.where||'',what:p.what||'',check:null,busy:false,mode:edit?'self':'choose',area:'',feel:[],note:'',seeds:null,seedBusy:false,round:0,origin:'',sp:'frog',pname:''};
+}
+function steps(n){return `<div class="steps" aria-hidden="true">${[0,1,2].map(i=>`<i class="${i<=n?'on':''}"></i>`).join('')}</div>`}
+function renderOb(){
+  if(ob.step===3)return petScreen();
+  if(ob.step===0)return `<div class="stack"><div class="hero"><h1>지금 바로,<br>첫 돌을 놓아 볼까요?</h1><p class="sub">목표 하나를 정하고, 오늘 한 걸음을 기록하면 시작이에요. 1분이면 돼요.</p></div>${steps(0)}
+  <div class="card"><label for="nick">별명</label><input type="text" id="nick" data-ob="nick" maxlength="12" value="${esc(ob.nick)}" placeholder="예: 새벽달" autocomplete="off">
+  <p class="tiny" style="margin-top:8px">실명, 학교, 전화번호 같은 개인정보는 쓰지 마세요. AI에게는 별명을 보내지 않아요.</p></div>
+  <button class="btn block" data-act="ob-next">다음</button><div class="err" id="err"></div></div>`;
+  if(ob.step===1&&ob.mode==='choose')return choiceScreen();
+  if(ob.step===1&&ob.mode==='help')return helpScreen();
+  if(ob.step===1){
+    const c=ob.check;
+    const rows=c?[['구체적인 행동이에요',c.specific],['숫자로 셀 수 있어요',c.measurable],['기한이 있어요',c.deadline]].map(([t,ok])=>`<div class="${ok?'ok':'no'}"><span>${t}</span><b>${ok?'충족':'더 생각해 보기'}</b></div>`).join(''):'';
+    return `<div class="stack"><div class="hero"><h1>내가 이루고 싶은 것을<br>한 줄로 써 보세요</h1><p class="sub">구체적이고, 숫자로 셀 수 있고, 기한이 있으면 이루기 쉬워요. 고치는 것은 언제나 내 몫이에요.</p></div>${steps(1)}
+    ${ob.origin?'<div class="hint">후보에서 골랐어요. 내 말로 고쳐 쓰면 더 내 목표가 돼요.</div>':''}<div class="card"><label for="goalIn">나의 목표</label><textarea id="goalIn" data-ob="goal" maxlength="120" placeholder="예: 12월 31일까지 매일 팔굽혀펴기 30개 하기">${esc(ob.goal)}</textarea>
+    <div class="lab" style="margin-top:14px">기록하는 방법</div>
+    <div class="seg"><input type="radio" name="type" id="t1" value="count" data-ob="type" ${ob.type==='count'?'checked':''}><label for="t1">숫자로 기록<br><span class="tiny">횟수, 분, 쪽 수</span></label>
+    <input type="radio" name="type" id="t2" value="check" data-ob="type" ${ob.type==='check'?'checked':''}><label for="t2">했는지만 체크<br><span class="tiny">했어요 / 시작만 했어요</span></label></div></div>
+    ${c?`<div class="card"><h3>내 목표 점검</h3><div class="check">${rows}</div><p class="q">${esc(c.question)}</p><p class="muted" style="margin-top:8px">${esc(c.tiny)}</p>${c.ai?'':'<p class="tiny" style="margin-top:8px">AI 없이 간단히 점검했어요.</p>'}</div>`:''}
+    <div class="row"><button class="btn ghost" data-act="ob-check" ${ob.busy?'disabled':''}>${ob.busy?'살펴보는 중…':'내 목표 점검하기'}</button><button class="btn" data-act="ob-next">이대로 다음</button></div><div class="err" id="err"></div><button class="link" data-act="ob-mode" data-v="help">목표가 잘 안 떠올라요. 도움 받기</button></div>`;
+  }
+  return `<div class="stack"><div class="hero"><h1>언제, 어디서,<br>무엇을 할지 정해요</h1><p class="sub">때와 장소를 정해 두면 시작이 쉬워져요. 오늘 2분만 한다고 생각해도 좋아요.</p></div>${steps(2)}
+  <div class="card"><label for="when">언제</label><input type="text" id="when" data-ob="when" maxlength="30" value="${esc(ob.when)}" placeholder="예: 저녁 먹고 나서">
+  <div class="chips">${['아침에 일어나서','학교 끝나고','저녁 먹고 나서','자기 전에'].map(v=>`<button type="button" class="chip" data-act="chip" data-f="when" data-v="${v}">${v}</button>`).join('')}</div>
+  <label for="where" style="margin-top:14px">어디서</label><input type="text" id="where" data-ob="where" maxlength="30" value="${esc(ob.where)}" placeholder="예: 내 방">
+  <label for="what" style="margin-top:14px">무엇을 (가장 작은 첫 행동)</label><input type="text" id="what" data-ob="what" maxlength="40" value="${esc(ob.what)}" placeholder="예: 매트 깔고 5개만 해 보기"></div>
+  ${ob.type==='count'?`<div class="card"><div class="row" style="align-items:flex-end"><div style="flex:1;min-width:120px"><label for="target">하루 약속한 양</label><input type="number" inputmode="numeric" id="target" data-ob="target" min="1" value="${esc(ob.target)}" placeholder="30"></div><div style="flex:1;min-width:120px"><label for="unit">단위</label><input type="text" id="unit" data-ob="unit" maxlength="6" value="${esc(ob.unit)}" placeholder="개, 분, 쪽"></div></div></div>`:''}
+  <div class="row"><button class="btn ghost" data-act="ob-back">이전</button><button class="btn lamp" data-act="ob-done">${ob.edit?'목표 저장하기':'첫 돌 놓으러 가기'}</button></div><div class="err" id="err"></div></div>`;
+}
+
+/* 오늘 */
+function entryText(k){
+  const e=S.entries[k],g=S.goal,u=g.type==='count'?g.unit||'':'';
+  const act=g.type==='count'?`${e.val}${u} (약속 ${g.target||'-'}${u})${e.done?' 달성':''}`:(e.done?'했어요':'시작만 했어요');
+  return `${S.nick} ${dayNum(k)}일차 ${g.text.slice(0,24)}\n\n1. 나의 목표\n${g.text}\n\n2. 오늘 실천한 내용\n${act}${e.win?`\n작은 승리: ${e.win}`:''}\n\n3. 느낀 점\n${e.note||'(오늘은 짧게 기록만 했어요)'}`;
+}
+function viewToday(){
+  const t=todayKey(),e=S.entries[t],N=dayNum(),g=S.goal,sk=streak();
+  const yest=addDays(t,-1),miss=!S.entries[yest]&&!S.bridges[yest]&&yest>=S.start&&tickets()>0&&keys().length>0;
+  const head=`<div class="hero"><p class="tiny">${kdate(t)}</p><h1>${esc(S.nick)}님, ${N}일차</h1><p class="sub">연속 ${sk}일 · 기록한 날 ${keys().length}번 · 회복권 ${Math.max(0,tickets())}장</p><p class="sub" style="margin-top:2px">칭호 <b>${esc(level(keys().length).name)}</b>${nextMile(keys().length)?` · ${nextMile(keys().length).d}일 보상까지 ${nextMile(keys().length).d-keys().length}번`:''}</p></div>`;
+  const goalCard=`<div class="card"><p class="tiny">내가 정한 목표</p><p style="font-weight:600;margin-top:2px">${esc(g.text)}</p>${g.plan&&(g.plan.when||g.plan.what)?`<p class="muted" style="margin-top:8px">${esc([g.plan.when,g.plan.where,g.plan.what].filter(Boolean).join(' · '))}</p>`:''}</div>`;
+  const bridge=miss?`<div class="hint">어제는 쉬어갔어요. 회복권으로 어제를 이어 붙이면 연속 기록이 끊기지 않아요.<div style="margin-top:8px"><button class="btn ghost" data-act="bridge" data-d="${yest}">회복권 쓰기</button></div></div>`:'';
+  if(e&&!form){
+    const celebrate=justSaved?`<div class="card"><div class="drop" aria-hidden="true"><span class="r"></span><span class="r r2"></span><span class="stone" style="background:var(--e${e.energy})"></span></div><h2 style="text-align:center;font-size:22px">오늘의 돌을 놓았어요</h2>${justSaved.title?`<p style="text-align:center;margin-top:6px">새 칭호: <b>${esc(justSaved.title)}</b></p>`:''}${justSaved.newBadges.length?`<p style="text-align:center;margin-top:6px">새 배지: <b>${justSaved.newBadges.map(esc).join(', ')}</b></p>`:''}${justSaved.newItems&&justSaved.newItems.length?`<p style="text-align:center;margin-top:6px">새 꾸미기: <b>${justSaved.newItems.map(esc).join(', ')}</b></p>`:''}</div>${mileCard()}<div class="card" id="fb"><div class="skeleton"></div><div class="skeleton" style="width:60%"></div></div>`:'';
+    return `<div class="stack">${head}${petCard()}${celebrate}
+    <div class="card"><h3>오늘의 기록</h3><p>${g.type==='count'?`<b>${e.val}${esc(unit())}</b> <span class="muted">/ 약속 ${esc(g.target||'-')}${esc(unit())}</span>`:`<b>${e.done?'했어요':'시작만 했어요'}</b>`}${e.done?' · 약속을 지켰어요':''}</p>
+    ${e.win?`<p class="muted" style="margin-top:6px">작은 승리: ${esc(e.win)}</p>`:''}
+    ${e.note?`<p class="pre-wrap" style="margin-top:8px">${esc(e.note)}</p>`:''}
+    <div class="row" style="margin-top:12px"><button class="btn ghost" data-act="edit-today">고치기</button><button class="btn" data-act="copy" data-d="${t}">글 복사하기</button></div><div class="tiny" id="copyMsg" style="margin-top:8px" aria-live="polite"></div></div>${goalCard}${questCard()}</div>`;
+  }
+  const f=form||(form={val:e?e.val:'',done:e?(e.done?'1':'0'):'',energy:e?e.energy:0,note:e?e.note:'',win:e?e.win:''});
+  const first=keys().length===0;
+  const input=g.type==='count'
+   ?`<label for="val">오늘 한 양 (${esc(unit())})</label><div class="stepper"><button type="button" data-act="step" data-n="-1" aria-label="하나 줄이기">−</button><input type="number" inputmode="numeric" id="val" data-form="val" min="0" value="${esc(f.val)}"><button type="button" data-act="step" data-n="1" aria-label="하나 늘리기">+</button></div>${g.target?`<div class="row" style="margin-top:8px"><button type="button" class="chip" data-act="fill">약속한 만큼 ${esc(g.target)}${esc(unit())}</button><span class="tiny">적게 해도 돌은 놓여요</span></div>`:''}`
+   :`<div class="lab">오늘 실천</div><div class="seg"><input type="radio" name="done" id="d1" value="1" data-form="done" ${f.done==='1'?'checked':''}><label for="d1">했어요</label><input type="radio" name="done" id="d0" value="0" data-form="done" ${f.done==='0'?'checked':''}><label for="d0">시작만 했어요</label></div>`;
+  return `<div class="stack">${head}${petCard()}${bridge}${rwHint()}${goalCard}${questCard()}
+  ${first?`<div class="hint">오늘이 1일차예요. 2분이면 첫 돌을 놓을 수 있어요. 아주 작게 시작해도 괜찮아요.</div>`:''}
+  <div class="card stack"><h3>오늘의 돌 놓기</h3><div>${input}</div>
+  <div><div class="lab">지금 내 에너지는?</div><div class="energy">${['방전','느릿','보통','충전'].map((n,i)=>`<input type="radio" name="energy" id="en${i+1}" value="${i+1}" data-form="energy" ${f.energy===i+1?'checked':''}><label for="en${i+1}" class="l${i+1}"><i></i>${n}</label>`).join('')}</div>
+  <p class="hint" id="lowE" style="margin-top:8px" ${f.energy===1?'':'hidden'}>방전인 날에는 가장 작은 양이면 충분해요. 기록하는 것만으로도 돌은 놓입니다.</p></div>
+  <div><label for="note">오늘 느낀 점 (한 줄이면 돼요)</label><textarea id="note" data-form="note" maxlength="600" placeholder="어떤 점이 쉬웠거나 어려웠나요? 어제와 달라진 점이 있나요?">${esc(f.note)}</textarea></div>
+  <div><label for="win">오늘의 작은 승리 (선택)</label><input type="text" id="win" data-form="win" maxlength="60" value="${esc(f.win)}" placeholder="예: 귀찮았지만 시작했다"></div>
+  <div class="err" id="err" aria-live="polite"></div>
+  <button class="btn lamp block" data-act="save-today">오늘의 돌 놓기</button></div></div>`;
+}
+async function loadFeedback(){
+  const t=todayKey(),e=S.entries[t],box=$('#fb');
+  if(!e||!box)return;
+  if(justSaved.fb){paintFb(justSaved.fb);return}
+  const fb=await feedback(t,e);
+  if(!justSaved)return;
+  justSaved.fb=fb;paintFb(fb);
+}
+function paintFb(fb){
+  const box=$('#fb');if(!box)return;
+  box.innerHTML=`<p class="tiny">오늘의 한마디${fb.ai?' · AI 코치':''}</p><p style="margin-top:4px">${esc(fb.observe)}</p><p class="q" style="margin-top:10px">${esc(fb.question)}</p><p class="tiny" style="margin-top:8px">답은 내일의 기록에 한 줄로 써 봐도 좋아요.</p>`;
+}
+
+/* 나의 변화 */
+function stonesSvg(){
+  const t=todayKey(),ds=dayset(),cw=50,rh=58,W=350,H=4*rh+6;
+  let pts=[],g='',tx=0,ty=0;
+  const can=k=>!ds[k]&&k<t&&k>=S.start&&diffDays(k,t)<=7&&tickets()>0;
+  for(let i=0;i<28;i++){
+    const k=addDays(t,i-27),r=Math.floor(i/7),c=i%7,col=r%2===0?c:6-c;
+    const x=25+col*cw,y=30+r*rh+((hash(k)%9)-4);
+    pts.push([x,y]);if(k===t){tx=x;ty=y}
+    const e=S.entries[k];
+    let cls='st';
+    if(e)cls+=' s'+e.energy;else if(S.bridges[k])cls+=' bridge';else if(k<S.start)cls+=' pre';else if(k<t)cls+=' miss'+(can(k)?' can':'');
+    if(k===t)cls+=' today';
+    const label=e?`${kdate(k)} 기록`:S.bridges[k]?`${kdate(k)} 회복권으로 이음`:can(k)?`${kdate(k)} 쉼, 회복권으로 잇기`:`${kdate(k)}`;
+    g+=`<g class="${cls}" data-d="${k}" ${can(k)?'role="button" tabindex="0" data-act="bridge-ask"':''} aria-label="${label}"><ellipse cx="${x}" cy="${y}" rx="19" ry="14"/>${k===t?`<ellipse class="ring" cx="${x}" cy="${y}" rx="23" ry="18"/>`:''}<text x="${x}" y="${y}">${parse(k).getDate()}</text></g>`;
+  }
+  const d='M'+pts.map(p=>p.join(' ')).join(' L');
+  return `<svg viewBox="0 0 ${W} ${H}" role="group" aria-label="최근 28일 징검다리"><rect class="water" x="0" y="0" width="${W}" height="${H}" rx="14"/><path class="path" d="${d}"/>${g}${S.pet?`<g transform="translate(${tx-15} ${ty-40}) scale(.25)">${petInner(S.pet,petMood(),stageOf(keys().length))}</g>`:''}</svg>
+  <div class="legend"><span><i style="background:var(--e1)"></i>방전</span><span><i style="background:var(--e2)"></i>느릿</span><span><i style="background:var(--e3)"></i>보통</span><span><i style="background:var(--e4)"></i>충전</span><span><i style="border:1.5px dashed var(--water)"></i>회복권</span></div>`;
+}
+function barChart(){
+  const ks=keys().filter(k=>S.entries[k].val!==''&&S.entries[k].val!=null).slice(-14);
+  if(S.goal.type!=='count'||ks.length<2)return '';
+  const vals=ks.map(k=>Number(S.entries[k].val)||0),tgt=Number(S.goal.target)||0,max=Math.max(...vals,tgt,1);
+  const W=350,H=160,pl=8,pb=22,pt=18,step=(W-pl*2)/ks.length,bw=Math.min(22,step-6);
+  const y=v=>pt+(H-pt-pb)*(1-v/max);
+  let g='';
+  if(tgt)g+=`<line class="tl" x1="0" x2="${W}" y1="${y(tgt)}" y2="${y(tgt)}"/>`;
+  ks.forEach((k,i)=>{const v=vals[i],x=pl+step*i+(step-bw)/2,yy=y(v);
+    g+=`<rect class="bar ${S.entries[k].done?'ok':''}" x="${x}" y="${yy}" width="${bw}" height="${Math.max(0,H-pb-yy)}" rx="4"/><text class="lbl" x="${x+bw/2}" y="${yy-4}" text-anchor="middle">${v}</text><text class="lbl2" x="${x+bw/2}" y="${H-6}" text-anchor="middle">${parse(k).getDate()}</text>`});
+  return `<div class="card"><h3>최근 기록한 양</h3><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="최근 ${ks.length}번 기록한 양">${g}</svg><p class="tiny" style="margin-top:6px">${tgt?`점선은 약속한 ${tgt}${esc(unit())}이고, 진한 막대는 약속을 지킨 날이에요.`:''}</p></div>`;
+}
+function viewChange(){
+  const ks=keys(),n=ks.length,done=ks.filter(k=>S.entries[k].done).length;
+  const tiles=`<div class="tiles"><div class="tile"><b>${streak()}</b><span>연속으로 건넌 날</span></div><div class="tile"><b>${n}</b><span>기록한 날</span></div><div class="tile"><b>${done}</b><span>약속을 지킨 날</span></div>${S.goal.type==='count'?`<div class="tile"><b>${total().toLocaleString('ko-KR')}</b><span>지금까지 누적 (${esc(unit())||'합계'})</span></div>`:`<div class="tile"><b>${Math.max(0,tickets())}</b><span>남은 회복권</span></div>`}</div>`;
+  let energy='';
+  if(n>=14){const a=avgEnergy(ks.slice(0,7)),b=avgEnergy(ks.slice(-7));energy=`<div class="card"><h3>에너지의 흐름</h3><p>처음 7번 평균 <b>${a.toFixed(1)}</b> → 최근 7번 평균 <b>${b.toFixed(1)}</b> <span class="muted">(1 방전, 4 충전)</span></p></div>`}
+  const withNote=ks.filter(k=>(S.entries[k].note||'').trim());
+  let cmp='';
+  if(withNote.length>=2){
+    const f=withNote[0],l=withNote[withNote.length-1];
+    cmp=`<div class="card"><h3>내 글의 변화</h3><div class="cmp"><div class="card"><small>${dayNum(f)}일차의 나</small><p>${esc(S.entries[f].note)}</p></div><div class="card"><small>${dayNum(l)}일차의 나</small><p>${esc(S.entries[l].note)}</p></div></div>
+    ${withNote.length>=5?`<div style="margin-top:12px"><button class="btn ghost" data-act="ai-change">AI에게 달라진 점 물어보기</button></div><div id="aiChange" aria-live="polite" style="margin-top:12px"></div>`:'<p class="tiny" style="margin-top:8px">글이 5편 쌓이면 AI와 함께 달라진 점을 살펴볼 수 있어요.</p>'}</div>`;
+  }else cmp=`<div class="card"><h3>내 글의 변화</h3><p class="muted">글이 두 편 쌓이면 처음의 나와 지금의 나를 나란히 볼 수 있어요.</p></div>`;
+  const bd=badges();
+  return `<div class="stack"><div class="hero"><h1>나의 변화</h1><p class="sub">쉬는 날이 있어도 다리는 이어져요. 돌아온 날이 가장 중요한 날이에요.</p></div>
+  <div class="card"><h3>최근 28일 징검다리</h3>${stonesSvg()}<div id="bridgeBox" aria-live="polite" style="margin-top:10px"></div><p class="tiny" style="margin-top:8px">회복권은 7번 기록할 때마다 1장씩 생기고, 쉬어 간 날(점선 노란 테두리)을 눌러 이어 붙일 수 있어요.</p></div>
+  ${tiles}${barChart()}${energy}${cmp}
+  <div class="card"><h3>내가 모은 배지</h3><div class="badges">${bd.map(b=>`<div class="badge ${b.got?'got':''}"><b>${esc(b.n)}</b><span>${esc(b.d)}</span><div class="bar2" aria-hidden="true"><i style="width:${Math.min(100,Math.round(b.v/b.t*100))}%"></i></div><span>${Math.min(b.v,b.t)} / ${b.t}${b.got?' · 달성':''}</span></div>`).join('')}</div></div></div>`;
+}
+
+/* 목표 정하기: 직접 쓰기 / 같이 찾기 */
+function choiceScreen(){
+  return `<div class="stack"><div class="hero"><h1>목표는 어떻게<br>정해 볼까요?</h1><p class="sub">정답은 없어요. 나에게 맞는 방법을 골라 주세요.</p></div>${steps(1)}
+  <button class="choice" data-act="ob-mode" data-v="self"><b>내 목표가 있어요</b><span>직접 한 줄로 써 볼게요</span></button>
+  <button class="choice" data-act="ob-mode" data-v="help"><b>목표를 같이 찾아봐요</b><span>${store.sample?'AI가 후보를 보여 주면 ':''}골라서 내 말로 바꿔 볼게요</span></button></div>`;
+}
+function helpScreen(){
+  const s=ob.seeds;
+  return `<div class="stack"><div class="hero"><h1>목표 찾기를<br>같이 해 볼게요</h1><p class="sub">${store.sample?'AI가':'예시로'} 후보를 3개 보여 줘요. 고르고 내 말로 바꾸는 것은 내 몫이에요.</p></div>${steps(1)}
+  <div class="card"><div class="lab">끌리는 영역</div><div class="chips">${AREAS.map(a=>`<button type="button" class="chip ${ob.area===a?'on':''}" data-act="area" data-v="${a}" aria-pressed="${ob.area===a}">${a}</button>`).join('')}</div>
+  <div class="lab" style="margin-top:16px">요즘 내 마음에 가까운 것 (여러 개 가능)</div><div class="chips">${FEELS.map(f=>`<button type="button" class="chip ${ob.feel.includes(f)?'on':''}" data-act="feel" data-v="${f}" aria-pressed="${ob.feel.includes(f)}">${f}</button>`).join('')}</div>
+  <label for="helpnote" style="margin-top:16px">요즘 신경 쓰이는 것 (선택)</label><textarea id="helpnote" data-ob="note" maxlength="200" placeholder="예: 숙제를 자꾸 미루게 돼요">${esc(ob.note)}</textarea>
+  <p class="tiny" style="margin-top:6px">이름, 학교 같은 개인정보는 쓰지 마세요.</p></div>
+  <button class="btn block" data-act="seed-get" ${ob.seedBusy?'disabled':''}>${ob.seedBusy?'찾아보는 중…':s?'다른 후보 보기':(store.sample?'후보 받기':'예시 후보 보기')}</button>
+  <div class="err" id="err" aria-live="polite"></div>
+  ${s?`<div class="stack">${s.seeds.map((x,i)=>`<div class="card seed"><p style="font-weight:600">${esc(x.goal)}</p><p class="muted" style="margin:4px 0 10px">${x.type==='count'?`하루 ${esc(x.target)}${esc(x.unit)}`:'했는지 체크'} · ${esc(x.why)}</p><button class="btn ghost" data-act="seed-pick" data-i="${i}">이걸로 시작해 볼래요</button></div>`).join('')}<p class="q">${esc(s.question)}</p>${s.ai?'':'<p class="tiny">AI 없이 준비된 예시예요.</p>'}</div>`:''}
+  <button class="link" data-act="ob-mode" data-v="self">내 목표를 직접 쓸래요</button></div>`;
+}
+
+/* 캐릭터 그리기 (모두 직접 그린 원본) */
+function star5(cx,cy,r){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;p.push((cx+Math.cos(a)*rr).toFixed(1)+','+(cy+Math.sin(a)*rr).toFixed(1))}return p.join(' ')}
+function sparkle(cx,cy,r,c){return `<path d="M${cx} ${cy-r} Q${cx} ${cy} ${cx+r} ${cy} Q${cx} ${cy} ${cx} ${cy+r} Q${cx} ${cy} ${cx-r} ${cy} Q${cx} ${cy} ${cx} ${cy-r}Z" fill="${c}"/>`}
+function heart(x,y){return `<path d="M0 3 C-7 -3 -4 -8 0 -4 C4 -8 7 -3 0 3Z" fill="#FF5C8A" transform="translate(${x} ${y})"/>`}
+function petBase(sp){
+  const [c1,c2]=PAL[sp];
+  if(sp==='frog')return {top:38,lx:42,rx:78,ey:54,my:88,sy:98,eyeBg:true,back:'',
+    body:`<ellipse cx="60" cy="86" rx="40" ry="30" fill="${c1}"/><circle cx="42" cy="54" r="14" fill="${c1}"/><circle cx="78" cy="54" r="14" fill="${c1}"/><ellipse cx="60" cy="100" rx="26" ry="14" fill="#EAF9DC"/><circle cx="25" cy="88" r="5" fill="${c2}" opacity=".5"/><circle cx="95" cy="88" r="5" fill="${c2}" opacity=".5"/>`};
+  if(sp==='turtle')return {top:32,lx:49,rx:71,ey:62,my:77,sy:86,
+    back:`<ellipse cx="60" cy="92" rx="45" ry="26" fill="${c2}"/><path d="M34 88 Q60 72 86 88" stroke="#fff" stroke-opacity=".5" stroke-width="3" fill="none"/>`,
+    body:`<ellipse cx="36" cy="108" rx="9" ry="7" fill="${c1}"/><ellipse cx="84" cy="108" rx="9" ry="7" fill="${c1}"/><ellipse cx="60" cy="96" rx="30" ry="18" fill="${c1}"/><circle cx="60" cy="62" r="30" fill="${c1}"/>`};
+  return {top:30,lx:49,rx:71,ey:58,my:0,sy:80,beak:'<ellipse cx="60" cy="69" rx="10" ry="6" fill="#FF8A3D"/>',back:'',
+    body:`<ellipse cx="60" cy="88" rx="38" ry="26" fill="${c1}"/><circle cx="60" cy="58" r="28" fill="${c1}"/><path d="M57 31 Q52 20 63 23 Q60 29 65 31Z" fill="${c2}"/><ellipse cx="36" cy="92" rx="9" ry="14" fill="${c2}" opacity=".55" transform="rotate(20 36 92)"/><ellipse cx="84" cy="92" rx="9" ry="14" fill="${c2}" opacity=".55" transform="rotate(-20 84 92)"/>`};
+}
+function petEyes(c,mood){
+  let o='';
+  for(const x of [c.lx,c.rx]){
+    const y=c.ey;
+    if(c.eyeBg)o+=`<circle cx="${x}" cy="${y}" r="10" fill="#fff" stroke="#17323B" stroke-width="1.5"/>`;
+    if(mood==='cheer')o+=`<path d="M${x-7} ${y+2} Q${x} ${y-8} ${x+7} ${y+2}" stroke="#17323B" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+    else if(mood==='rest')o+=`<path d="M${x-7} ${y} Q${x} ${y+6} ${x+7} ${y}" stroke="#17323B" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    else o+=`<circle cx="${x}" cy="${y}" r="${c.eyeBg?5:6}" fill="#17323B"/><circle cx="${x+2}" cy="${y-2}" r="1.8" fill="#fff"/>`;
+  }
+  return o;
+}
+function petMouth(c,mood){
+  if(c.beak)return '';
+  const x=60,y=c.my;
+  if(mood==='cheer')return `<path d="M${x-9} ${y-2} Q${x} ${y+12} ${x+9} ${y-2}Z" fill="#E85D75" stroke="#17323B" stroke-width="2" stroke-linejoin="round"/>`;
+  if(mood==='rest')return `<ellipse cx="${x}" cy="${y}" rx="3" ry="2.5" fill="#17323B"/>`;
+  return `<path d="M${x-8} ${y-2} Q${x} ${y+7} ${x+8} ${y-2}" stroke="#17323B" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+}
+function petItem(id,c){
+  const t=c.top;
+  switch(id){
+    case 'ribbon':return `<g transform="translate(80 ${t+6})"><path d="M0 0 L-12 -8 L-12 8Z M0 0 L12 -8 L12 8Z" fill="#FF7A59"/><circle r="4" fill="#FFC83D"/></g>`;
+    case 'hat':return `<path d="M40 ${t+12} Q40 ${t-16} 60 ${t-16} Q80 ${t-16} 80 ${t+12}Z" fill="#FF7A59"/><rect x="37" y="${t+8}" width="46" height="9" rx="4.5" fill="#FFC83D"/><circle cx="60" cy="${t-17}" r="6" fill="#fff"/>`;
+    case 'flower':return `<g transform="translate(82 ${t+6})">${[0,72,144,216,288].map(a=>`<circle cx="${(Math.cos(a*Math.PI/180)*7).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*7).toFixed(1)}" r="5" fill="#FF9AC8"/>`).join('')}<circle r="4" fill="#FFC83D"/></g>`;
+    case 'phones':return `<path d="M35 ${t+24} Q35 ${t-12} 60 ${t-12} Q85 ${t-12} 85 ${t+24}" stroke="#17323B" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="29" y="${t+18}" width="11" height="20" rx="5" fill="#FF7A59"/><rect x="80" y="${t+18}" width="11" height="20" rx="5" fill="#FF7A59"/>`;
+    case 'goldstar':return `<polygon points="${star5(60,t-2,11)}" fill="#FFC83D" stroke="#E0A100" stroke-width="1.5"/>`;
+    case 'shades':return `<rect x="${c.lx-14}" y="${c.ey-7}" width="${c.rx-c.lx+28}" height="15" rx="7" fill="#17323B"/><path d="M${c.lx-8} ${c.ey-3} L${c.lx-2} ${c.ey-3}" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>`;
+    case 'glasses':return `<circle cx="${c.lx}" cy="${c.ey}" r="11" fill="#fff" fill-opacity=".25" stroke="#17323B" stroke-width="2.5"/><circle cx="${c.rx}" cy="${c.ey}" r="11" fill="#fff" fill-opacity=".25" stroke="#17323B" stroke-width="2.5"/><path d="M${c.lx+11} ${c.ey} L${c.rx-11} ${c.ey}" stroke="#17323B" stroke-width="2.5"/>`;
+    case 'blush':return heart(c.lx-8,c.ey+14)+heart(c.rx+8,c.ey+14);
+    case 'cap':return `<path d="M34 ${t+6} L60 ${t-8} L86 ${t+6} L60 ${t+20}Z" fill="#17323B"/><rect x="50" y="${t+10}" width="20" height="10" fill="#17323B"/><path d="M82 ${t+6} L82 ${t+22}" stroke="#FFC83D" stroke-width="2.5"/><circle cx="82" cy="${t+24}" r="3" fill="#FFC83D"/>`;
+  }
+  return '';
+}
+function petInner(P,mood,st){
+  const c=petBase(P.sp),eq=P.equip||{},t=c.top;
+  let o=`<ellipse cx="60" cy="116" rx="32" ry="5" fill="#17323B" opacity=".1"/>`;
+  if(st>=4)o+=`<circle cx="60" cy="74" r="54" fill="#FFC83D" opacity=".22"/>`;
+  if(st>=3)o+=`<path d="M32 66 Q14 90 12 112 L108 112 Q106 90 88 66Z" fill="#8E7CFF" opacity=".9"/>`;
+  o+=c.back+c.body;
+  if(st>=2)o+=`<rect x="36" y="${c.sy}" width="48" height="9" rx="4.5" fill="#FF7A59"/><rect x="68" y="${c.sy+4}" width="9" height="16" rx="4" fill="#FF7A59"/>`;
+  if(!(eq.face==='blush'))o+=`<ellipse cx="${c.lx-9}" cy="${c.ey+13}" rx="6" ry="4" fill="#FF9AA2" opacity=".5"/><ellipse cx="${c.rx+9}" cy="${c.ey+13}" rx="6" ry="4" fill="#FF9AA2" opacity=".5"/>`;
+  o+=(c.beak||'')+petEyes(c,mood)+petMouth(c,mood);
+  if(eq.face)o+=petItem(eq.face,c);
+  if(eq.head)o+=petItem(eq.head,c);
+  if(st>=4)o+=`<path d="M44 ${t-14} L47 ${t-28} L54 ${t-18} L60 ${t-32} L66 ${t-18} L73 ${t-28} L76 ${t-14}Z" fill="#FFC83D" stroke="#E0A100" stroke-width="1.5" stroke-linejoin="round"/>`;
+  if(st>=1)o+=sparkle(16,44,6,'#FFC83D')+sparkle(104,62,5,'#2FBFCC');
+  if(mood==='rest')o+=`<text x="92" y="${t+4}" font-size="16" font-weight="700" fill="#58757E" font-family="sans-serif">zZ</text>`;
+  if(mood==='cheer')o+=sparkle(20,t+12,5,'#FF7A59')+sparkle(100,t+10,6,'#FFC83D');
+  return `<g transform="translate(60 118) scale(${[.72,.82,.9,.97,1][st||0]}) translate(-60 -118)">${o}</g>`;
+}
+const petSvg=(P,mood,st)=>`<svg viewBox="0 0 120 124" role="img" aria-label="${esc(SPNAME[P.sp])} 친구">${petInner(P,mood,st)}</svg>`;
+function petMood(){
+  const t=todayKey();
+  if(S.entries[t])return 'cheer';
+  const ks=keys(),y=addDays(t,-1);
+  if(ks.length&&!S.entries[y]&&!S.bridges[y]&&diffDays(ks[ks.length-1],t)>=2)return 'rest';
+  return 'wait';
+}
+function petLine(mood){
+  if(justSaved&&justSaved.evo)return `와, 진화했어! 이제 나는 "${justSaved.evo}"야!`;
+  if(justSaved&&justSaved.back)return '돌아와 줬구나! 기다렸어!';
+  const L={
+    wait:['오늘의 돌, 같이 놓을까?','오늘은 아주 조금만 해도 좋아.','네가 오면 나도 힘이 나!'],
+    rest:['잠깐 쉬었구나. 괜찮아, 오늘부터 다시!','언제 와도 반가워. 작게 한 번만 해 볼까?','푹 쉬었으니 오늘은 가볍게 시작해 보자.'],
+    cheer:['오늘도 해냈다!','네 덕분에 한 칸 더 건넜어!','멋져, 오늘의 돌이 반짝여!']
+  }[mood];
+  return L[hash(todayKey()+(S.pet?S.pet.name:''))%L.length];
+}
+function petCard(){
+  const P=S.pet;
+  if(!P)return `<div class="card"><h3>함께 건널 친구</h3><p class="muted">기록할 때마다 함께 자라는 친구를 만나 볼까요?</p><button class="btn lamp" style="margin-top:10px" data-act="pet-start">친구 만나기</button></div>`;
+  const mood=petMood(),st=stageOf(keys().length);
+  return `<div class="card petcard"><div class="pet" aria-hidden="true">${petSvg(P,mood,st)}</div><div class="bubble"><small>${esc(P.name)} · ${STAGES[st]}</small><p>${esc(petLine(mood))}</p></div></div>`;
+}
+function itemsOwned(){
+  const got=badges().filter(b=>b.got).map(b=>b.n),codes=(S.pet&&S.pet.codes)||{};
+  return ITEMS.filter(i=>i.badge?got.includes(i.badge):codes[i.code]).map(i=>i.id);
+}
+function petScreen(){
+  return `<div class="stack"><div class="hero"><h1>함께 건널<br>친구를 골라요</h1><p class="sub">기록할 때마다 함께 자라요. 쉬는 날에는 같이 쉬어요.</p></div>${steps(2)}
+  <div class="pets">${['frog','turtle','duck'].map(sp=>`<input type="radio" name="sp" id="sp_${sp}" value="${sp}" data-ob="sp" ${ob.sp===sp?'checked':''}><label for="sp_${sp}"><div class="pet" aria-hidden="true">${petSvg({sp,equip:{}},'happy',1)}</div>${SPNAME[sp]}</label>`).join('')}</div>
+  <div class="card"><label for="pname">친구 이름</label><input type="text" id="pname" data-ob="pname" maxlength="8" value="${esc(ob.pname)}" placeholder="비워 두면 기본 이름으로 불러요"></div>
+  <button class="btn lamp block" data-act="pet-done">좋아, 시작!</button></div>`;
+}
+let friendMsg='';
+function friendSection(){
+  const P=S.pet;
+  if(!P)return `<div class="card"><h3>내 친구</h3><p class="muted">아직 친구가 없어요.</p><button class="btn lamp" style="margin-top:10px" data-act="pet-start">친구 만나기</button></div>`;
+  const n=keys().length,st=stageOf(n),nx=STAGE_AT[st+1],owned=itemsOwned();
+  const slot=(sl,label)=>`<div class="lab" style="margin-top:14px">${label}</div><div class="chips"><button class="chip ${!P.equip[sl]?'on':''}" data-act="equip" data-slot="${sl}" data-item="" aria-pressed="${!P.equip[sl]}">없음</button>${ITEMS.filter(i=>i.slot===sl).map(i=>owned.includes(i.id)?`<button class="chip ${P.equip[sl]===i.id?'on':''}" data-act="equip" data-slot="${sl}" data-item="${i.id}" aria-pressed="${P.equip[sl]===i.id}">${i.name}</button>`:`<span class="chip lock">${i.name} · ${i.badge?`배지 "${esc(i.badge)}"`:'선생님 쪽지 코드'}</span>`).join('')}</div>`;
+  return `<div class="card friend"><div class="pet" aria-hidden="true">${petSvg(P,petMood(),st)}</div>
+  <h2 style="text-align:center;font-size:24px">${esc(P.name)}</h2><p class="muted" style="text-align:center">${SPNAME[P.sp]} · ${STAGES[st]}${nx?` · ${nx-n}번 더 기록하면 "${STAGES[st+1]}"`:' · 마지막 모습이에요'}</p>
+  ${slot('head','머리 꾸미기')}${slot('face','얼굴 꾸미기')}
+  <div class="lab" style="margin-top:16px">선생님 쪽지 코드</div><div class="row"><input type="text" id="code" maxlength="20" style="flex:1;min-width:140px" placeholder="쪽지에 적힌 코드" autocomplete="off"><button class="btn ghost" data-act="code">선물 받기</button></div><div class="tiny" id="codeMsg" aria-live="polite" style="margin-top:6px">${esc(friendMsg)}</div></div>`;
+}
+
+/* ---------- 퀘스트 ---------- */
+const CATS={sports:'운동·스포츠',tech:'공학·IT',study:'공부·교과',art:'예술·창작',care:'돌봄·의료·교육',other:'아직 모르겠어요'};
+const QTYPE={dream:'꿈 퀘스트',life:'생활 퀘스트',explore:'탐색 퀘스트',review:'복습'};
+const QMAX=2;
+// 한 항목: [제목, 배울 것, 질문, 정답, 오답1, 오답2, 힌트, 설명]
+const DREAM_BANK={
+ sports:[
+  ['영어 한마디: 응원에 감사해요','"Thank you for the support."는 "응원해 주셔서 감사합니다"라는 뜻이에요. 경기 후 인터뷰에서 팬에게 자주 쓰는 말이에요.','경기가 끝난 뒤 팬들에게 "응원해 주셔서 감사합니다"라고 말할 때 알맞은 표현은?','Thank you for the support.','I am very hungry.','See you yesterday.','support는 "응원, 지지"라는 뜻이에요.','support는 응원이라는 뜻이라서 Thank you for the support.가 알맞아요.'],
+  ['영어 한마디: 최선을 다했어요','"I gave it my best."는 "최선을 다했어요"라는 뜻이에요. 결과와 상관없이 노력을 말할 때 쓸 수 있어요.','"최선을 다했어요"에 가장 가까운 영어 표현은?','I gave it my best.','I lost my shoes.','It is a sunny day.','best는 "가장 좋은 것, 최선"이에요.','gave it my best가 최선을 다했다는 표현이에요.'],
+  ['영어 한마디: 힘든 경기였어요','"It was a tough match."는 "힘든 경기였어요"라는 뜻이에요. tough는 힘든, 만만치 않은이라는 뜻이에요.','"It was a tough match."의 뜻으로 알맞은 것은?','힘든 경기였어요','쉬운 경기였어요','경기가 취소됐어요','tough는 어렵고 힘든 상황에 써요.','tough는 힘든이라는 뜻이라 힘든 경기였다는 말이에요.'],
+  ['영어 한마디: 동료 덕분이에요','"My teammates helped me a lot."은 "동료들이 저를 많이 도와줬어요"라는 뜻이에요. 감사한 마음을 전할 때 좋아요.','"동료들이 저를 많이 도와줬어요"를 영어로 하면?','My teammates helped me a lot.','My teacher is a doctor.','My bag is very heavy.','teammate는 같은 팀 동료예요.','teammates helped me가 동료들이 나를 도왔다는 뜻이에요.'],
+  ['영어 한마디: 계속 노력할게요','"I will keep working hard."는 "계속 열심히 노력할게요"라는 뜻이에요. 다음 목표를 말할 때 써요.','"계속 열심히 노력할게요"에 알맞은 영어 표현은?','I will keep working hard.','I will never eat lunch.','I was in the library.','keep ~ing는 "계속 ~하다"예요.','keep working hard가 계속 열심히 한다는 표현이에요.'],
+  ['준비운동을 하는 이유','운동 전에 몸을 천천히 움직이면 체온이 오르고 근육이 풀려서 다칠 위험이 줄어요.','준비운동을 하는 가장 큰 이유는?','다치는 위험을 줄이고 몸을 쓰기 쉽게 하려고','땀을 일부러 많이 내려고','심판에게 보여 주려고','몸을 갑자기 쓰면 어떻게 될지 생각해 봐요.','준비운동은 근육과 관절을 준비시켜 부상 위험을 줄여 줘요.'],
+  ['운동 후 수분 보충','운동하면 땀으로 물이 빠져나가요. 운동 중과 후에 물을 조금씩 나눠 마시면 몸이 회복하는 데 도움이 돼요.','땀을 많이 흘린 뒤 먼저 해야 할 일은?','물을 조금씩 마셔 수분을 채운다','아무것도 마시지 않는다','바로 눕는다','땀에는 무엇이 많이 들어 있을까요?','땀으로 수분이 빠지므로 물을 보충하는 것이 중요해요.'],
+  ['영어 한마디: 이 자리에 있어 영광이에요','"It is an honor to be here."는 "이 자리에 있게 되어 영광입니다"라는 뜻이에요.','"이 자리에 있게 되어 영광입니다"에 알맞은 표현은?','It is an honor to be here.','It is too cold here.','I want to go home.','honor는 "영광, 명예"예요.','honor가 영광이라는 뜻이라 알맞은 표현이에요.']
+ ],
+ tech:[
+  ['알고리즘이란','알고리즘은 문제를 해결하기 위한 순서와 방법이에요. 라면 끓이는 순서도 알고리즘이에요.','알고리즘이란?','문제를 해결하는 순서와 방법','컴퓨터를 식히는 부품','인터넷 속도의 단위','요리 순서를 떠올려 봐요.','알고리즘은 문제 해결 절차예요.'],
+  ['컴퓨터는 0과 1','컴퓨터는 전기가 켜지고 꺼진 상태를 0과 1로 나타내 정보를 처리해요. 이것을 이진법이라고 해요.','컴퓨터가 정보를 나타내는 기본 숫자는?','0과 1','1부터 10','가나다','켜짐과 꺼짐 두 가지 상태를 생각해 봐요.','컴퓨터는 두 가지 상태를 0과 1로 표현해요.'],
+  ['센서가 하는 일','센서는 빛, 온도, 소리, 움직임 같은 것을 알아내서 전기 신호로 바꿔 줘요. 자동문과 스마트폰에도 들어 있어요.','센서의 역할로 알맞은 것은?','주변의 빛이나 온도 같은 것을 감지해 신호로 바꾼다','화면 글자를 크게 만든다','와이파이 비밀번호를 만든다','자동문은 어떻게 사람을 알까요?','센서는 감지하고 신호로 바꾸는 부품이에요.'],
+  ['전기 회로','전구에 불이 켜지려면 전지, 전선, 전구가 끊기지 않고 한 바퀴로 이어져야 해요. 이것을 회로라고 해요.','전구에 불이 켜지려면?','전선이 끊기지 않고 이어져 전류가 흘러야 한다','전구를 거꾸로 돌린다','전선을 없앤다','길이 끊기면 전기가 갈 수 있을까요?','회로가 이어져야 전류가 흘러요.'],
+  ['변수란','변수는 값을 담아 두고 이름을 붙인 상자 같은 거예요. 점수를 score라는 이름에 담아 두면 필요할 때 꺼내 쓰고 바꿀 수 있어요.','프로그래밍에서 변수의 설명으로 알맞은 것은?','값을 담아 두는 이름 붙은 상자','화면을 꺼 주는 버튼','인터넷 선','score에 10을 담았다가 11로 바꿀 수 있어요.','변수는 값을 저장하고 바꿀 수 있어요.'],
+  ['디버깅이란','프로그램에서 문제(버그)를 찾아 고치는 일을 디버깅이라고 해요. 천천히 한 줄씩 확인하는 것이 방법이에요.','디버깅이란?','프로그램의 오류를 찾아 고치는 일','프로그램을 지우는 일','새 컴퓨터를 사는 일','bug는 벌레라는 뜻이에요.','디버깅은 오류를 찾아 고치는 과정이에요.']
+ ],
+ study:[
+  ['피타고라스 정리','직각삼각형에서 직각을 낀 두 변의 길이를 a, b, 빗변의 길이를 c라고 하면 a²+b²=c²이에요.','직각을 낀 두 변이 3, 4인 직각삼각형의 빗변은?','5','6','7','3²+4²=9+16이에요.','9+16=25이고 25의 양의 제곱근은 5예요.'],
+  ['제곱근','제곱해서 a가 되는 수를 a의 제곱근이라고 해요. 9의 양의 제곱근은 3이에요(3×3=9).','√49의 값은?','7','49','24.5','어떤 수를 두 번 곱하면 49일까요?','7×7=49이므로 √49=7이에요.'],
+  ['일차함수의 기울기','y=ax+b에서 a가 기울기예요. x가 1 늘 때 y가 얼마나 변하는지를 나타내요.','y=2x+1의 기울기는?','2','1','3','y=ax+b에서 a를 찾아봐요.','a=2이므로 기울기는 2예요.'],
+  ['영어: go의 과거형','불규칙 동사 go의 과거형은 went예요. I went to school yesterday.처럼 써요.','다음 중 go의 과거형은?','went','goed','gone to','불규칙 동사는 모양이 달라져요.','go의 과거형은 went예요.'],
+  ['광합성','식물은 빛 에너지를 이용해 이산화탄소와 물로 양분을 만들고 산소를 내보내요. 이것이 광합성이에요.','광합성에 필요한 재료로 알맞은 것은?','이산화탄소와 물','소금과 설탕','철과 구리','식물이 공기와 뿌리로 얻는 것을 생각해 봐요.','광합성은 이산화탄소와 물, 빛으로 양분을 만들어요.'],
+  ['속담 뜻 알기','"가는 말이 고와야 오는 말이 곱다"는 내가 남에게 좋게 말해야 남도 나에게 좋게 말한다는 뜻이에요.','이 속담이 주는 교훈은?','내가 먼저 좋게 말하면 상대도 좋게 대한다','말은 빨리 할수록 좋다','말을 아예 하지 않아야 한다','말이 오가는 관계를 생각해 봐요.','내가 한 말이 상대의 말로 돌아온다는 뜻이에요.']
+ ],
+ art:[
+  ['빛의 삼원색','컴퓨터와 스마트폰 화면은 빨강, 초록, 파랑 빛을 섞어 여러 색을 만들어요. 이 세 색을 빛의 삼원색이라고 해요.','빛의 삼원색은?','빨강, 초록, 파랑','노랑, 주황, 보라','검정, 하양, 회색','화면을 확대하면 어떤 색 점이 보일까요?','화면은 빨강, 초록, 파랑 빛으로 색을 만들어요.'],
+  ['3분할 구도','화면을 가로, 세로 3등분하는 선을 긋고 선이 만나는 곳에 주인공을 두면 안정적이고 보기 좋아요.','3분할 구도에서 주인공을 두기 좋은 곳은?','가로 세로 선이 만나는 지점 근처','항상 화면 한가운데만','화면 모서리 밖','선이 만나는 네 점을 떠올려 봐요.','선이 만나는 지점은 시선이 머무는 곳이라 효과적이에요.'],
+  ['저작권','다른 사람이 만든 그림과 글에는 저작권이 있어요. 허락받거나 출처를 밝히는 것이 창작자에 대한 예의예요.','인터넷에서 찾은 그림을 내 작품처럼 올려도 될까요?','안 돼요. 허락과 출처가 필요해요','돼요, 인터넷에 있으니까요','이름만 바꾸면 돼요','그림을 만든 사람의 입장을 생각해 봐요.','남의 작품을 허락 없이 내 것처럼 쓰면 안 돼요.'],
+  ['영어 한마디: 내 작품이에요','"This is my work."는 "이것은 제 작품이에요"라는 뜻이에요. 작품을 소개할 때 써요.','"이것은 제 작품이에요"에 알맞은 표현은?','This is my work.','This is my lunch.','That is a bus.','work에는 일 외에 작품이라는 뜻도 있어요.','work는 작품이라는 뜻으로도 써요.'],
+  ['명암 대비','밝은 부분과 어두운 부분의 차이가 크면 눈에 더 잘 띄어요. 중요한 부분을 강조할 때 써요.','그림에서 중요한 부분을 눈에 띄게 하는 방법으로 알맞은 것은?','주변과 밝기나 색의 차이를 크게 한다','모든 곳을 같은 색으로 칠한다','아주 작게 그린다','검은 종이 위 흰 글씨를 떠올려 봐요.','대비가 크면 눈에 잘 띄어요.']
+ ],
+ care:[
+  ['좋은 경청','상대 말을 끊지 않고 끝까지 들은 뒤 "~했구나" 하고 마음을 확인해 주는 것이 좋은 경청이에요.','좋은 경청에 가까운 행동은?','끝까지 듣고 "~했구나" 하고 확인한다','말 중간에 내 얘기를 한다','휴대폰을 보며 듣는다','듣는 사람의 눈과 반응을 생각해 봐요.','끝까지 듣고 마음을 확인하는 것이 경청이에요.'],
+  ['손 씻기','흐르는 물에 비누로 30초 이상 손바닥, 손등, 손가락 사이, 손톱 밑까지 씻으면 세균을 줄일 수 있어요.','올바른 손 씻기에 가까운 것은?','비누로 30초 이상 구석구석 씻는다','물만 살짝 묻힌다','손바닥만 1초 문지른다','깨끗이 하려면 시간이 필요해요.','비누로 30초 이상 씻는 것이 권장돼요.'],
+  ['긴급 전화번호','화재나 응급 환자가 생기면 119에 전화해요. 말을 천천히 하고 위치를 먼저 알려 주면 도움이 빨리 와요.','불이 났거나 사람이 크게 다쳤을 때 거는 번호는?','119','114','080','소방과 구급의 번호예요.','화재와 응급은 119예요.'],
+  ['공감 표현','"많이 힘들었겠다"처럼 상대의 마음을 읽어 주는 말을 공감 표현이라고 해요. 해결책보다 먼저 마음을 알아주면 힘이 돼요.','친구가 시험을 망쳐서 속상하다고 할 때 먼저 건넬 말로 좋은 것은?','많이 속상했겠다','그건 네 잘못이야','별일 아니니까 잊어','마음을 먼저 알아주는 말을 찾아봐요.','공감이 먼저일 때 상대가 위로받아요.'],
+  ['영어 한마디: 기분이 어때요?','"How are you feeling today?"는 "오늘 기분이 어때요?"라는 뜻이에요. 돌보는 사람이 환자나 친구에게 자주 해요.','"오늘 기분이 어때요?"에 알맞은 표현은?','How are you feeling today?','Where is the station?','What time is lunch?','feel은 느끼다라는 뜻이에요.','feeling은 기분이나 느낌을 물을 때 써요.']
+ ],
+ other:[
+  ['영어 한마디: 만나서 반가워요','"Nice to meet you."는 처음 만났을 때 쓰는 인사로 "만나서 반가워요"라는 뜻이에요.','처음 만난 사람에게 "만나서 반가워요"라고 할 때 알맞은 표현은?','Nice to meet you.','See you tomorrow.','Good night.','meet은 만나다라는 뜻이에요.','처음 만났을 때는 Nice to meet you.예요.'],
+  ['영어 한마디: 도와주실 수 있나요?','"Could you help me, please?"는 정중하게 "도와주실 수 있나요?"라고 부탁하는 말이에요.','정중하게 도움을 청하는 표현은?','Could you help me, please?','Help me now.','You help.','please가 들어가면 정중해져요.','Could you ~, please?는 공손한 부탁 표현이에요.'],
+  ['영어 한마디: 좋은 생각이에요','"That is a great idea!"는 "좋은 생각이에요!"라는 뜻이에요. 친구 의견을 칭찬할 때 써요.','"좋은 생각이야!"에 알맞은 표현은?','That is a great idea!','That is a big dog.','I am sleepy.','idea는 생각, 아이디어예요.','great idea는 좋은 생각이라는 뜻이에요.'],
+  ['영어 한마디: 어떻게 생각해요?','"What do you think?"는 "어떻게 생각해요?"라고 상대 의견을 물을 때 써요.','상대 의견을 묻는 표현은?','What do you think?','What is your name?','Where do you live?','think는 생각하다예요.','What do you think?는 의견을 묻는 말이에요.'],
+  ['영어 한마디: 잘했어요','"Good job!"은 "잘했어요!"라는 칭찬이에요. 나에게도 말해 줄 수 있어요.','"잘했어요!"에 알맞은 표현은?','Good job!','Good morning!','Bad luck.','job은 일이라는 뜻이고, 잘한 일이라는 칭찬이에요.','Good job!은 잘했다는 칭찬이에요.']
+ ]
+};
+const LIFE_BANK=[
+  ['사기 전에 한 번 생각','물건을 사기 전에 "꼭 필요한 것인가, 갖고 싶은 것인가"를 먼저 구분하면 불필요한 지출을 줄일 수 있어요.','사고 싶은 물건 앞에서 먼저 하면 좋은 일은?','필요한 것인지 갖고 싶은 것인지 생각해 본다','일단 바로 산다','친구가 산다고 따라 산다','필요와 욕구는 달라요.','필요한 것과 갖고 싶은 것을 구분하면 현명하게 쓸 수 있어요.'],
+  ['먼저 저금하기','용돈을 받으면 쓰고 남은 것을 모으기보다, 먼저 일정 금액을 저금하고 나머지를 쓰면 더 잘 모여요.','용돈을 잘 모으는 방법으로 알맞은 것은?','받자마자 일부를 먼저 저금한다','다 쓰고 남으면 저금한다','저금은 안 한다','순서를 바꾸는 게 핵심이에요.','먼저 저금하면 자연스럽게 모여요.'],
+  ['잠 잘 자는 습관','잠들기 전에 화면 빛을 보면 잠들기 어려울 수 있어요. 자기 30분 전에는 휴대폰을 멀리 두면 좋아요.','잠을 잘 자는 데 도움이 되는 습관은?','자기 전에 휴대폰을 멀리 둔다','자기 직전까지 영상을 본다','밤늦게 에너지 음료를 마신다','자기 전에 눈을 쉬게 하는 것을 생각해 봐요.','화면을 줄이면 잠들기 쉬워져요.'],
+  ['감정에 이름 붙이기','"나는 지금 불안해"처럼 마음에 이름을 붙여 말하면 감정이 조금 가라앉고 어떻게 할지 생각하기 쉬워져요.','마음이 복잡할 때 도움이 되는 방법은?','내 감정에 이름을 붙여 말하거나 써 본다','무조건 참고 모른 척한다','화를 다른 사람에게 푼다','감정을 알아야 다룰 수 있어요.','감정에 이름을 붙이면 다루기 쉬워져요.'],
+  ['개인정보 지키기','이름, 학교, 집 주소, 전화번호 같은 개인정보는 인터넷에서 모르는 사람에게 알려 주면 안 돼요.','인터넷에서 모르는 사람이 내 집 주소를 물으면?','알려 주지 않고 어른에게 말한다','바로 알려 준다','사진과 함께 알려 준다','낯선 사람은 누구인지 확인할 수 없어요.','개인정보는 알려 주지 않는 것이 안전해요.'],
+  ['큰 일은 작게 나누기','해야 할 일이 크게 느껴지면 시작하기 어려워요. 5분짜리로 쪼개서 첫 걸음만 시작하면 쉬워져요.','하기 싫은 큰 일을 시작하는 좋은 방법은?','5분짜리 작은 일로 쪼개 첫 걸음만 시작한다','내일로 계속 미룬다','한꺼번에 몰아서 한다','작게 시작하면 부담이 줄어요.','작게 나누면 시작이 쉬워져요.'],
+  ['도움 요청하기','혼자 해결하기 어려울 때 믿을 수 있는 어른이나 친구에게 말하는 것은 약한 게 아니라 용기 있는 일이에요.','힘든 일이 있을 때 가장 좋은 행동은?','믿을 수 있는 사람에게 말하고 도움을 구한다','아무에게도 말하지 않는다','화가 날 때까지 참는다','혼자 끌어안지 않아도 돼요.','도움을 구하는 것은 용기예요.']
+];
+DREAM_BANK.sports.push(
+  ['영어 한마디: 공정하게 해요','"Let us play fair."는 "공정하게 경기해요"라는 뜻이에요. fair는 공정한이라는 뜻이에요.','"공정하게 경기해요"에 알맞은 표현은?','Let us play fair.','Let us go to bed.','Let us buy a hat.','fair는 규칙을 지키는 공정함이에요.','fair는 공정하다는 뜻이에요.'],
+  ['영어 한마디: 우리 팀이 자랑스러워요','"I am proud of my team."은 "우리 팀이 자랑스러워요"라는 뜻이에요. proud는 자랑스러운이에요.','"우리 팀이 자랑스러워요"에 알맞은 표현은?','I am proud of my team.','I am afraid of my team.','I am late for my team.','proud는 자랑스러운이라는 뜻이에요.','proud of ~는 ~이 자랑스럽다는 표현이에요.'],
+  ['영어 한마디: 멋진 슛!','"Nice shot!"은 잘 쳤거나 잘 찼을 때 하는 칭찬이에요. 동료를 응원할 때 좋아요.','동료가 멋지게 슛을 넣었을 때 할 말은?','Nice shot!','Bad luck!','Be quiet!','nice는 좋은, 멋진이라는 뜻이에요.','Nice shot!은 멋진 슛이라는 칭찬이에요.'],
+  ['스포츠맨십','상대를 존중하고, 규칙을 지키고, 결과를 깨끗이 받아들이는 태도가 스포츠맨십이에요.','경기에서 졌을 때 스포츠맨십에 맞는 행동은?','상대에게 악수하며 수고했다고 말한다','심판을 탓하며 화를 낸다','상대를 비웃는다','경기가 끝난 뒤 상대를 어떻게 대할지 생각해 봐요.','결과를 받아들이고 상대를 존중하는 것이 스포츠맨십이에요.'],
+  ['회복도 훈련이에요','근육은 운동하는 동안이 아니라 쉬고 자는 동안 회복되며 튼튼해져요. 잠과 휴식도 훈련의 일부예요.','운동 실력을 키우는 데 도움이 되는 습관은?','충분히 자고 쉬면서 회복한다','잠을 줄여서 더 연습한다','아파도 계속 무리한다','몸이 회복되는 시간을 생각해 봐요.','회복 없이는 몸이 지치기만 하고 실력이 늘기 어려워요.'],
+  ['아플 때는 쉬어요','운동 중 날카로운 통증이 있으면 무리하지 않고 멈춰서 쉬고, 계속 아프면 어른이나 의료진에게 알려야 해요.','운동하다가 심하게 아플 때 가장 알맞은 행동은?','멈추고 쉬면서 어른에게 알린다','참고 계속한다','아무에게도 말하지 않는다','몸의 신호를 무시하면 어떻게 될까요?','통증은 몸의 신호라서 멈추고 알리는 것이 안전해요.']
+);
+DREAM_BANK.tech.push(
+  ['반복문이란','같은 일을 여러 번 해야 할 때 한 줄로 반복시키는 것을 반복문이라고 해요. "박수를 10번 쳐라"처럼요.','같은 동작을 여러 번 시킬 때 쓰는 프로그래밍 방법은?','반복문','변수 이름 바꾸기','화면 밝기 조절','몇 번 되풀이할지 정해 줘요.','반복문은 같은 일을 되풀이하게 해 줘요.'],
+  ['조건문이란','"만약 비가 오면 우산을 챙긴다"처럼 조건에 따라 다르게 행동하게 하는 것을 조건문이라고 해요.','"만약 점수가 60점 이상이면 합격"처럼 상황에 따라 다르게 처리하는 것은?','조건문','반복문','저장 장치','"만약 ~라면"으로 시작해요.','조건문은 조건에 따라 다른 일을 하게 해요.'],
+  ['1바이트는 8비트','컴퓨터에서 가장 작은 정보 단위는 비트(0 또는 1)이고, 비트 8개를 묶어 1바이트라고 해요.','1바이트는 몇 비트일까요?','8비트','2비트','100비트','비트 8개를 묶어요.','1바이트=8비트예요.'],
+  ['안전한 비밀번호','비밀번호는 길게 만들고, 사이트마다 다르게 쓰고, 남에게 알려 주지 않는 것이 안전해요.','안전한 비밀번호 습관은?','길게 만들고 사이트마다 다르게 쓴다','생일을 모든 곳에 쓴다','친구와 같이 쓴다','한 곳이 털리면 다른 곳은 어떻게 될까요?','같은 비밀번호를 여러 곳에 쓰면 한 번에 뚫릴 수 있어요.'],
+  ['지레의 원리','지레는 받침점, 힘점, 작용점으로 이루어져 있어요. 받침점에서 힘점까지의 거리가 멀수록 작은 힘으로 물건을 들 수 있어요.','지레로 작은 힘으로 무거운 물건을 들려면?','받침점에서 힘점을 멀리 둔다','받침점에서 힘점을 가깝게 둔다','지레를 쓰지 않는다','시소의 긴 쪽을 생각해 봐요.','힘점이 받침점에서 멀수록 힘이 적게 들어요.']
+);
+DREAM_BANK.art.push(
+  ['보색','색상환에서 서로 마주 보는 색을 보색이라고 해요. 파랑과 주황이 대표적인 보색이고, 나란히 두면 서로 더 선명해 보여요.','파랑과 보색 관계인 색은?','주황','초록','보라','색상환에서 맞은편 색이에요.','파랑의 보색은 주황이에요.'],
+  ['원근법','가까운 것은 크고 선명하게, 먼 것은 작고 흐리게 그리면 공간이 깊어 보여요.','그림에서 멀리 있는 것을 표현하는 방법은?','작고 흐리게 그린다','크고 진하게 그린다','가까운 것과 똑같이 그린다','길이 멀어질수록 어떻게 보이는지 떠올려 봐요.','멀리 있는 것은 작고 흐리게 보여요.'],
+  ['차가운 색과 따뜻한 색','파랑과 초록 계열은 차갑고 차분한 느낌이고, 빨강과 주황 계열은 따뜻하고 활기찬 느낌이에요. 느낌에 맞게 색을 고르면 좋아요.','차분하고 시원한 느낌을 주고 싶을 때 알맞은 색은?','파랑 계열','빨강 계열','주황 계열','바다와 하늘의 색을 떠올려 봐요.','파랑 계열은 차갑고 시원한 느낌을 줘요.'],
+  ['관찰해서 그리기','대상을 자세히 보고 그리면 모양과 비율을 더 잘 알게 돼요. 매일 한 장씩 그리면 실력이 쌓여요.','그림 실력을 키우는 좋은 습관은?','대상을 자세히 보며 꾸준히 그린다','한 번만 크게 그린다','보지 않고 상상으로만 그린다','잘 보는 것이 먼저예요.','관찰과 꾸준한 연습이 실력을 키워요.'],
+  ['영어 한마디: 영감을 받았어요','"I got inspiration from nature."는 "자연에서 영감을 받았어요"라는 뜻이에요. inspiration은 영감, 아이디어가 떠오르는 계기예요.','"자연에서 영감을 받았어요"에 알맞은 표현은?','I got inspiration from nature.','I got a ticket from nature.','I lost nature.','inspiration은 영감이라는 뜻이에요.','inspiration은 영감이에요. 작품 소개에 자주 써요.']
+);
+DREAM_BANK.care.push(
+  ['가벼운 화상 응급처치','가벼운 화상을 입으면 흐르는 찬물에 충분히 식히는 것이 먼저예요. 치약이나 얼음을 바로 대는 것은 좋지 않아요. 심하면 어른에게 알리고 병원에 가요.','가벼운 화상을 입었을 때 가장 먼저 할 일은?','흐르는 찬물에 충분히 식힌다','치약을 바른다','얼음을 직접 문지른다','열을 식히는 것이 먼저예요.','흐르는 찬물로 식히는 것이 가장 기본적인 응급처치예요.'],
+  ['영어 한마디: 천천히 하세요','"Take your time."은 "천천히 하세요, 서두르지 마세요"라는 뜻이에요. 돌보는 사람이 상대를 편하게 해 줄 때 써요.','"서두르지 말고 천천히 하세요"에 알맞은 표현은?','Take your time.','Hurry up now.','Time is money.','time은 시간이에요.','Take your time.은 천천히 해도 된다는 배려의 말이에요.'],
+  ['다른 사람의 정보 존중','친구나 환자의 건강, 가정 이야기는 그 사람의 소중한 정보예요. 허락 없이 다른 사람에게 말하지 않는 것이 존중이에요.','친구가 털어놓은 비밀 이야기를 들었을 때 알맞은 행동은?','허락 없이 다른 사람에게 말하지 않는다','반 친구들에게 알려 준다','SNS에 올린다','그 사람의 입장을 생각해 봐요.','다른 사람의 정보는 함부로 말하지 않는 것이 존중이에요.'],
+  ['노력을 칭찬하기','결과만 칭찬하기보다 "끝까지 해 봤구나"처럼 노력과 과정을 칭찬하면 다시 도전할 힘이 생겨요.','도전하는 친구에게 더 힘이 되는 칭찬은?','끝까지 노력한 점을 구체적으로 칭찬한다','결과만 보고 평가한다','다른 친구와 비교한다','과정에 주목해 봐요.','노력과 과정을 칭찬하면 도전할 힘이 생겨요.'],
+  ['쉽게 설명하기','남을 가르치거나 돌볼 때는 어려운 말을 쉬운 말로 바꿔 설명하는 것이 중요해요. 상대가 이해했는지 물어보면 더 좋아요.','어려운 내용을 설명할 때 좋은 방법은?','쉬운 말로 바꾸고 이해했는지 물어본다','전문 용어만 빠르게 말한다','한 번만 말하고 끝낸다','듣는 사람이 알아들어야 해요.','쉬운 말과 확인이 좋은 설명이에요.']
+);
+DREAM_BANK.other.push(
+  ['영어 한마디: 실례합니다','"Excuse me."는 사람에게 말을 걸거나 지나가야 할 때 쓰는 말이에요.','길을 물으려고 처음 말을 걸 때 알맞은 표현은?','Excuse me.','Good night.','See you soon.','excuse는 양해를 구한다는 뜻이에요.','Excuse me.는 말을 걸 때 쓰는 정중한 표현이에요.'],
+  ['영어 한마디: 정말 고마워요','"Thank you so much."는 "정말 고마워요"라는 뜻이에요. so much가 고마움을 더 크게 해 줘요.','"정말 고마워요"에 알맞은 표현은?','Thank you so much.','I am so hungry.','Are you so tall?','thank는 고마워하다예요.','Thank you so much.는 깊은 고마움을 표현해요.'],
+  ['영어 한마디: 이해가 안 돼요','"I do not understand."는 "이해가 안 돼요"라는 뜻이에요. 모르면 솔직하게 말하는 것이 배움의 시작이에요.','"이해가 안 돼요"에 알맞은 표현은?','I do not understand.','I do not like water.','I do not have time.','understand는 이해하다예요.','understand가 이해하다라는 뜻이라 알맞아요.'],
+  ['영어 한마디: 천천히 말해 주세요','"Could you speak more slowly, please?"는 "더 천천히 말해 주시겠어요?"라는 뜻이에요.','상대가 너무 빨리 말할 때 쓸 표현은?','Could you speak more slowly, please?','Could you open the window, please?','Could you buy a ticket, please?','slowly는 천천히라는 뜻이에요.','slowly가 천천히라서 이 문장이 알맞아요.'],
+  ['영어 한마디: 나중에 봐요','"See you later."는 "나중에 봐요"라는 뜻이에요. 헤어질 때 가볍게 쓰는 인사예요.','헤어지면서 "나중에 봐요"라고 할 때 알맞은 표현은?','See you later.','Nice to meet you.','Good morning.','later는 나중이라는 뜻이에요.','See you later.가 나중에 보자는 인사예요.']
+);
+LIFE_BANK.push(
+  ['출처 확인하기','인터넷 글이나 영상이 항상 사실은 아니에요. 누가 썼는지, 근거가 있는지, 다른 곳에도 같은 내용이 있는지 확인해 보세요.','놀라운 소식이 인터넷에 올라왔을 때 먼저 할 일은?','출처와 근거를 확인한다','바로 친구들에게 퍼뜨린다','그대로 믿는다','누가 어떤 근거로 썼는지 봐요.','확인하지 않은 정보를 퍼뜨리면 거짓이 퍼질 수 있어요.'],
+  ['한 번 올리면 남아요','인터넷에 올린 글과 사진은 지워도 다른 사람이 저장해 둘 수 있어요. 올리기 전에 한 번 더 생각해요.','인터넷에 글이나 사진을 올리기 전 좋은 습관은?','올려도 괜찮은지 한 번 더 생각한다','일단 올리고 나중에 생각한다','다른 사람 사진도 허락 없이 올린다','지워도 남을 수 있어요.','한 번 올린 것은 완전히 지우기 어려울 수 있어요.'],
+  ['정중하게 거절하기','하기 싫거나 불편한 부탁은 "미안한데 그건 어려워"처럼 정중하게 거절해도 괜찮아요. 거절은 나를 지키는 방법이에요.','불편한 부탁을 받았을 때 좋은 방법은?','정중하게 어렵다고 말한다','화를 내며 소리친다','싫어도 무조건 들어준다','내 마음과 상대 마음 모두 존중해 봐요.','정중한 거절은 나와 상대를 모두 존중하는 방법이에요.'],
+  ['아침 먹기','아침을 먹으면 하루를 시작할 에너지를 얻고 집중하는 데 도움이 돼요. 간단한 것이라도 먹어 보세요.','아침 식사에 대한 설명으로 알맞은 것은?','하루를 시작할 에너지를 채워 준다','아무 도움이 안 된다','먹으면 항상 졸려서 해롭다','오랜 시간 굶은 몸을 떠올려 봐요.','아침은 에너지를 채워 집중에 도움이 돼요.'],
+  ['심호흡으로 진정하기','마음이 급하거나 화가 날 때는 코로 천천히 들이마시고 입으로 길게 내쉬는 깊은 숨을 세 번 해 보세요. 몸이 조금 진정돼요.','마음이 급할 때 바로 해 볼 수 있는 방법은?','천천히 깊게 숨을 세 번 쉰다','숨을 참는다','큰 소리로 화를 낸다','숨을 어떻게 쉬느냐가 몸에 영향을 줘요.','깊고 느린 호흡은 몸을 진정시키는 데 도움이 돼요.'],
+  ['어제의 나와 비교하기','다른 사람과 비교하면 힘이 빠지기 쉬워요. 어제의 나보다 조금 나아졌는지 보면 꾸준히 성장하는 힘이 생겨요.','나의 성장을 확인하는 좋은 방법은?','어제의 나와 비교해 본다','잘하는 친구와만 비교한다','결과가 나쁘면 포기한다','기준을 나에게 두어 봐요.','어제의 나와 비교하면 내 변화가 보여요.'],
+  ['사이버 괴롭힘을 보면','온라인에서 누군가를 놀리거나 괴롭히는 일을 보면 따라 하거나 퍼뜨리지 말고, 캡처해 두고 믿을 수 있는 어른에게 알려요.','온라인에서 친구가 괴롭힘당하는 것을 봤을 때 알맞은 행동은?','믿을 수 있는 어른에게 알리고 도움을 준다','웃으면서 퍼뜨린다','모른 척하고 아무 말도 안 한다','방관하지 않는 방법을 생각해 봐요.','어른에게 알리고 피해 친구를 돕는 것이 올바른 행동이에요.'],
+  ['약속 시간 지키기','약속 시간을 지키면 상대의 시간을 존중하는 것이고 신뢰가 쌓여요. 늦을 것 같으면 미리 알려 주는 것이 예의예요.','약속에 늦을 것 같을 때 알맞은 행동은?','미리 연락해서 사정을 알린다','연락 없이 천천히 간다','가지 않고 말하지 않는다','기다리는 사람의 마음을 생각해 봐요.','미리 알리면 상대가 배려받는다고 느껴요.']
+);
+// 공부(교과): 학년별
+const STUDY_BANK={
+ 1:[
+  ['소수와 합성수','소수는 1과 자기 자신만을 약수로 가지는 1보다 큰 자연수예요. 2, 3, 5, 7이 소수예요.','다음 중 소수는?','7','9','15','약수가 1과 자기 자신뿐인 수를 찾아봐요.','7의 약수는 1과 7뿐이라서 소수예요. 9는 3으로, 15는 3과 5로 나누어져요.'],
+  ['정수의 덧셈','(-3)+(+5)처럼 부호가 다른 두 수를 더할 때는 절댓값이 큰 쪽의 부호를 따르고 절댓값의 차를 구해요.','(-3)+(+5)의 값은?','+2','-2','+8','5와 3의 차를 구해 보세요.','절댓값의 차는 2이고 큰 쪽이 +5이므로 +2예요.'],
+  ['문자와 식','문자를 사용하면 규칙을 식으로 나타낼 수 있어요. 한 개에 x원인 연필 3자루의 값은 3x원이에요.','한 개에 a원인 빵 5개의 값을 식으로 나타내면?','5a원','a+5원','a÷5원','곱셈으로 생각해 봐요.','(한 개의 값)×(개수)이므로 5a원이에요.'],
+  ['일차방정식 풀기','x+4=10에서 양변에서 4를 빼면 x=6이에요. 등식은 양변에 같은 수를 더하거나 빼도 성립해요.','x+4=10일 때 x의 값은?','6','14','4','양쪽에서 같은 수를 빼 봐요.','10-4=6이므로 x=6이에요.'],
+  ['영어: be동사','I am, You are, He is처럼 주어에 따라 be동사가 달라져요.','빈칸에 알맞은 말은? She ___ a student.','is','are','am','She는 3인칭 단수예요.','She는 3인칭 단수이므로 is를 써요.'],
+  ['과학: 물질의 세 가지 상태','물질은 고체, 액체, 기체 상태로 있어요. 얼음이 녹아 물이 되는 것은 융해예요.','얼음이 녹아 물이 되는 현상은?','융해','응고','기화','고체에서 액체로 변해요.','고체가 액체로 변하는 것이 융해예요.'],
+  ['국어: 높임 표현','윗사람에게는 높임 표현을 써요. "밥을 먹다"를 높이면 "진지를 드시다"처럼 말해요.','어른께 "밥을 먹다"를 높여 말할 때 알맞은 것은?','진지를 드시다','밥을 먹어라','밥 먹자','어른께 쓰는 높임말을 생각해 봐요.','"드시다, 잡수시다"가 높임 표현이에요.'],
+  ['과학: 지구의 자전','지구는 하루에 한 바퀴씩 스스로 도는데, 이것을 자전이라고 해요. 자전 때문에 낮과 밤이 생겨요.','낮과 밤이 생기는 까닭은?','지구의 자전','지구의 공전','달의 모양 변화','하루에 한 번 도는 움직임이에요.','지구의 자전으로 해를 향한 쪽은 낮, 반대쪽은 밤이 돼요.']
+ ],
+ 2:[
+  ['연립방정식','두 식을 동시에 만족하는 x, y를 찾아요. x+y=5, x-y=1이면 두 식을 더해 2x=6, x=3이에요.','x+y=5, x-y=1일 때 x의 값은?','3','2','4','두 식을 더하면 y가 없어져요.','2x=6이므로 x=3이에요. 그러면 y=2예요.'],
+  ['일차함수 그래프','y=ax+b의 그래프에서 b는 y절편이에요. x=0일 때 y의 값이에요.','y=3x+2의 y절편은?','2','3','5','x에 0을 넣어 봐요.','x=0이면 y=2이므로 y절편은 2예요.'],
+  ['삼각형의 내각의 합','삼각형의 세 내각의 크기의 합은 항상 180°예요.','두 내각이 50°, 60°인 삼각형의 나머지 내각은?','70°','80°','60°','합이 180°예요.','180-50-60=70이므로 70°예요.'],
+  ['확률의 뜻','주사위를 한 번 던질 때 짝수가 나올 확률은 짝수가 3가지(2, 4, 6), 전체가 6가지이므로 3/6=1/2이에요.','주사위를 한 번 던질 때 짝수가 나올 확률은?','1/2','1/3','1/6','짝수는 2, 4, 6이에요.','3/6=1/2이에요.'],
+  ['영어: 현재완료','have/has + 과거분사로 "~해 본 적이 있다"를 표현해요. I have visited Busan.','"나는 부산에 가 본 적이 있다"에 알맞은 문장은?','I have visited Busan.','I am visit Busan.','I visiting Busan.','have+과거분사 형태를 찾아봐요.','have visited가 경험을 나타내는 현재완료예요.'],
+  ['과학: 식물의 호흡','식물은 낮에 광합성을 하고, 호흡은 낮과 밤 모두 해요. 호흡은 양분을 분해해 에너지를 얻는 과정이에요.','식물이 밤에도 계속하는 작용은?','호흡','광합성','꽃가루 만들기','호흡은 살아 있는 세포가 언제나 해요.','호흡은 낮과 밤 상관없이 계속돼요.'],
+  ['과학: 전류의 방향','전류는 전지의 (+)극에서 (-)극으로 흐르는 것으로 약속해요. 전자는 반대로 움직여요.','전류의 방향은 어떻게 약속했을까요?','(+)극에서 (-)극','(-)극에서 (+)극','방향이 없다','전지의 극을 떠올려 봐요.','전류는 (+)에서 (-)로 흐른다고 약속해요.'],
+  ['국어: 직유법','"~처럼, ~같이"를 써서 서로 다른 것을 직접 빗대는 표현을 직유법이라고 해요.','"그의 손은 얼음처럼 차가웠다"에 쓰인 표현법은?','직유법','대구법','반어법','"처럼"이라는 말에 주목해요.','"처럼"으로 직접 빗댔으므로 직유법이에요.']
+ ],
+ 3:[
+  ['제곱근과 근호','제곱해서 a가 되는 수를 a의 제곱근이라고 해요. 양수 a의 제곱근은 +√a와 -√a 두 개예요.','9의 제곱근을 모두 고르면?','3과 -3','3만','9와 -9','제곱해서 9가 되는 수는 두 개예요.','3²=9, (-3)²=9이므로 3과 -3이에요.'],
+  ['인수분해','x²+5x+6은 (x+2)(x+3)으로 나타낼 수 있어요. 곱해서 6, 더해서 5인 두 수가 2와 3이에요.','x²+5x+6을 인수분해하면?','(x+2)(x+3)','(x+1)(x+6)','(x-2)(x-3)','곱이 6, 합이 5인 두 수를 찾아봐요.','(x+2)(x+3)=x²+5x+6이에요.'],
+  ['이차방정식','(x-1)(x-4)=0이면 x-1=0 또는 x-4=0이에요. 곱이 0이면 한쪽이 0이에요.','(x-1)(x-4)=0의 해는?','x=1 또는 x=4','x=-1 또는 x=-4','x=4만','각 괄호를 0으로 놓아 봐요.','x-1=0이면 x=1, x-4=0이면 x=4예요.'],
+  ['피타고라스 정리','직각삼각형에서 빗변의 제곱은 다른 두 변의 제곱의 합과 같아요. 5, 12, 13은 대표적인 직각삼각형의 세 변이에요.','직각을 낀 두 변이 5와 12인 직각삼각형의 빗변은?','13','17','15','25+144를 구해 봐요.','25+144=169이고 169의 양의 제곱근은 13이에요.'],
+  ['삼각비 sin','직각삼각형에서 sin A는 (높이)÷(빗변)이에요. 빗변이 10, 높이가 6이면 sin A=6/10=3/5예요.','빗변 10, 높이 6인 직각삼각형에서 sin A는?','3/5','4/5','5/3','높이를 빗변으로 나눠요.','6÷10=3/5예요.'],
+  ['통계: 평균','평균은 자료의 값을 모두 더한 뒤 개수로 나눈 값이에요.','점수가 70, 80, 90인 학생의 평균은?','80','70','90','모두 더하면 240이에요.','240÷3=80이에요.'],
+  ['영어: 관계대명사','who는 사람을 설명할 때 써요. The girl who is singing is my sister.','빈칸에 알맞은 말은? The boy ___ is running is my friend.','who','which','what','사람을 꾸며 주는 말을 골라요.','사람을 가리킬 때는 관계대명사 who를 써요.'],
+  ['과학: 화학 반응','물질이 다른 물질로 변하는 것이 화학 반응이에요. 철이 녹스는 것도 화학 반응이에요.','다음 중 화학 반응에 해당하는 것은?','철이 녹슨다','얼음이 녹는다','설탕이 물에 녹는다','새로운 물질이 생기는지 살펴봐요.','철이 녹슬면 새로운 물질(녹)이 생기므로 화학 반응이에요.']
+ ]
+};
+const JOBS=[
+  {n:'운동선수',d:'경기에서 최고의 실력을 내기 위해 매일 훈련하고 경기해요.',c:'sports'},
+  {n:'엔지니어',d:'기계, 전기, 건설 같은 분야에서 문제를 계산하고 설계해 물건과 시설을 만들어요.',c:'tech'},
+  {n:'소프트웨어 개발자',d:'앱, 게임, 웹사이트가 움직이도록 프로그램을 만들어요.',c:'tech'},
+  {n:'교사',d:'학생이 배우고 성장하도록 가르치고 이끌어요.',c:'care'},
+  {n:'의사',d:'몸의 아픈 곳을 진단하고 치료해요.',c:'care'},
+  {n:'간호사',d:'환자를 돌보고 치료를 도와요.',c:'care'},
+  {n:'요리사',d:'재료로 맛있고 안전한 음식을 만들어요.',c:'other'},
+  {n:'웹툰 작가',d:'이야기와 그림으로 만화를 만들어 독자에게 보여 줘요.',c:'art'},
+  {n:'디자이너',d:'제품, 옷, 화면을 보기 좋고 쓰기 편하게 만들어요.',c:'art'},
+  {n:'건축가',d:'건물을 설계하고 사람이 편하게 쓰는 공간을 만들어요.',c:'tech'},
+  {n:'수의사',d:'동물의 병을 진단하고 치료해요.',c:'care'},
+  {n:'소방관',d:'화재와 사고 현장에서 사람을 구하고 안전을 지켜요.',c:'care'},
+  {n:'과학 연구원',d:'궁금한 것을 실험하고 새로운 사실을 밝혀내요.',c:'study'},
+  {n:'파일럿',d:'비행기를 안전하게 조종해 사람을 목적지까지 데려다줘요.',c:'tech'},
+  {n:'사회복지사',d:'어려운 사람이 도움을 받을 수 있게 연결하고 지원해요.',c:'care'},
+  {n:'영상 크리에이터',d:'영상을 기획하고 찍어서 사람들에게 이야기를 전해요.',c:'art'}
+];
+const Q=()=>{const q=S.quest=S.quest||{};q.log=q.log||{};q.ptr=q.ptr||{};q.notes=q.notes||[];q.jobs=q.jobs||{};q.jobPtr=q.jobPtr||0;q.reports=q.reports||0;q.review=q.review||[];q.stats=q.stats||{done:0,right:0};return q};
+let qs=null,qMsg='',qEditDream=false,dreamDraft=null;
+const qDoneToday=()=>Object.keys(Q().log[todayKey()]||{}).length;
+const mkItem=a=>({t:a[0],learn:a[1],q:a[2],o:[a[3],a[4],a[5]],hint:a[6],exp:a[7]});
+function shuffled(item){const order=[0,1,2].sort((a,b)=>hash(item.t+a+todayKey())-hash(item.t+b+todayKey()));return {opts:order.map(i=>item.o[i]),ans:order.indexOf(0)}}
+function startQuest(type){
+  const q=Q();
+  if(type==='review'){const it=q.review[0];if(!it)return;qs=Object.assign({type,key:null,item:it,wrong:[],right:null,ai:false,aiFail:false,reported:false,busy:false},shuffled(it));return}
+  if(type==='explore'){
+    let i=q.jobPtr%JOBS.length,tries=0;
+    while(q.jobs[JOBS[i].n]&&tries<JOBS.length){i=(i+1)%JOBS.length;tries++}
+    qs={type,job:JOBS[i]};return;
+  }
+  const cat=(S.dream&&S.dream.cat)||'other';
+  let key,bank;
+  if(type==='dream'){const g=S.dream&&S.dream.grade;if(cat==='study'&&g&&STUDY_BANK[g]){key='dream_study_'+g;bank=STUDY_BANK[g]}else{key='dream_'+cat;bank=DREAM_BANK[cat]}}else{key='life';bank=LIFE_BANK}
+  const item=mkItem(bank[(q.ptr[key]||0)%bank.length]);
+  qs=Object.assign({type,key,item,wrong:[],right:null,ai:false,aiFail:false,reported:false,busy:false},shuffled(item));
+}
+async function aiLesson(){
+  const q=Q(),recent=q.notes.filter(n=>n.type==='dream').slice(-8).map(n=>n.title).join(', ')||'없음';
+  const r=await ask(`너는 중학생의 꿈을 응원하는 학습 코치다.\n학생의 꿈: "${scrub(S.dream.text)}" (분야: ${CATS[S.dream.cat]}${S.dream.grade?`, 중학교 ${S.dream.grade}학년`:''})\n이미 배운 주제: ${recent}\n이 꿈에 도움이 되는 5분짜리 미니 학습을 1개 만든다. 조건: 중학생이 이해할 수 있게 쓰고, 확실한 사실만 쓴다. 자격증이나 시험의 이름, 일정, 응시 조건은 쓰지 않는다. learn은 3문장 이내. 영어 표현이면 한국어 뜻과 쓰임을 함께 쓴다. 3지선다 문제 1개. 이미 배운 주제와 겹치지 않게 한다. JSON만 출력한다.\n형식: {"title":"제목","learn":"배울 내용","quiz":{"q":"질문","options":["보기1","보기2","보기3"],"answer":0,"hint":"힌트","explain":"해설"}}`);
+  try{
+    const z=r&&r.quiz;
+    if(r&&r.title&&r.learn&&z&&Array.isArray(z.options)&&z.options.length===3&&z.options.every(x=>typeof x==='string'&&x)&&Number.isInteger(z.answer)&&z.answer>=0&&z.answer<3&&z.q){
+      const o=z.options,c=o[z.answer],rest=o.filter((_,i)=>i!==z.answer);
+      return mkItem([String(r.title).slice(0,40),String(r.learn).slice(0,400),String(z.q).slice(0,200),c,rest[0],rest[1],String(z.hint||'천천히 다시 읽어 봐요.').slice(0,120),String(z.explain||'').slice(0,200)]);
+    }
+  }catch(e){}
+  return null;
+}
+function questCard(){
+  const n=qDoneToday();
+  return `<div class="card"><div class="row" style="justify-content:space-between"><div><p class="tiny">오늘의 퀘스트</p><p style="font-weight:600">${n>=QMAX?'오늘 퀘스트를 모두 마쳤어요':`${n} / ${QMAX} 완료 · 하루 5분이면 돼요`}</p></div><button class="btn ghost" data-act="nav" data-v="quest">${n>=QMAX?'보기':'하러 가기'}</button></div></div>`;
+}
+function dreamForm(){
+  const d=dreamDraft||(dreamDraft={text:S.dream?S.dream.text:'',cat:S.dream?S.dream.cat:'',grade:S.dream?(S.dream.grade||0):0});
+  return `<div class="card"><h3>나의 꿈 적기</h3><label for="dtext">이루고 싶은 꿈</label><textarea id="dtext" data-dream="text" maxlength="80" placeholder="예: 세계적인 축구 선수가 되기">${esc(d.text)}</textarea>
+  <div class="lab" style="margin-top:12px">가까운 분야</div><div class="chips">${Object.keys(CATS).map(k=>`<button type="button" class="chip ${d.cat===k?'on':''}" data-act="dcat" data-v="${k}" aria-pressed="${d.cat===k}">${CATS[k]}</button>`).join('')}</div>
+  ${d.cat==='study'?`<div class="lab" style="margin-top:12px">학년</div><div class="chips">${[1,2,3].map(g=>`<button type="button" class="chip ${d.grade===g?'on':''}" data-act="dgrade" data-v="${g}" aria-pressed="${d.grade===g}">중${g}</button>`).join('')}<button type="button" class="chip ${!d.grade?'on':''}" data-act="dgrade" data-v="" aria-pressed="${!d.grade}">섞어서</button></div>`:''}
+  <div class="row" style="margin-top:14px"><button class="btn" data-act="dream-save">꿈 저장하기</button>${S.dream?'<button class="btn ghost" data-act="dream-cancel">취소</button>':''}</div><div class="err" id="err" aria-live="polite"></div>
+  <p class="tiny">아직 꿈이 없다면 아래 탐색 퀘스트부터 해 봐요. 이름 같은 개인정보는 쓰지 마세요.</p></div>`;
+}
+function viewQuest(){
+  if(qs)return questSession();
+  const q=Q(),t=todayKey(),log=q.log[t]||{},n=Object.keys(log).length;
+  const msg=qMsg?`<div class="hint" aria-live="polite">${esc(qMsg)}</div>`:'';
+  const first=!S.entries[t]?'<div class="hint">먼저 오늘의 돌(내 목표)을 놓으면 더 좋아요. 퀘스트는 그다음에 해도 충분해요.</div>':'';
+  const dreamCard=(!S.dream||qEditDream)?dreamForm():`<div class="card"><p class="tiny">나의 꿈 · ${esc(CATS[S.dream.cat]||'')}${S.dream.grade?` · 중${S.dream.grade}`:''}</p><p style="font-weight:600;margin-top:2px">${esc(S.dream.text)}</p><button class="link" data-act="dream-edit">꿈 고치기</button></div>`;
+  const qcard=(type,desc,off)=>`<div class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">${QTYPE[type]}</h3>${log[type]?'<span class="pill">오늘 완료</span>':''}</div><p class="muted" style="margin:6px 0 10px">${desc}</p>${log[type]?'':`<button class="btn" data-act="qstart" data-v="${type}" ${(off||n>=QMAX)?'disabled':''}>${n>=QMAX?'오늘은 충분해요':'시작하기'}</button>`}</div>`;
+  const likes=JOBS.filter(j=>q.jobs[j.n]==='like');
+  const explored=Object.keys(q.jobs).length;
+  const notes=q.notes.slice(-5).reverse();
+  return `<div class="stack"><div class="hero"><h1>퀘스트</h1><p class="sub">내 꿈과 살아가는 힘을 하루 5분씩 키워요. 하루 최대 ${QMAX}개만 해요.</p></div>${msg}${first}${dreamCard}
+  ${qcard('dream',S.dream?'내 꿈에 도움이 되는 5분 학습이에요. 영어 한마디, 개념, 상식을 배워요.':'먼저 위에서 꿈을 적으면 열려요.',!S.dream)}
+  ${qcard('life','살아가는 데 필요한 것을 5분씩 익혀요. 돈, 잠, 마음, 안전을 다뤄요.')}
+  ${qcard('explore',`하루에 직업 하나를 만나 봐요. ${explored?`지금까지 ${explored}개를 만났어요.`:'꿈이 없어도 괜찮아요.'}`)}
+  ${q.review.length?`<div class="card"><h3 style="margin:0">복습</h3><p class="muted" style="margin:6px 0 10px">한 번에 못 맞힌 문제 ${q.review.length}개를 다시 풀어 봐요. 하루 퀘스트 수에는 들어가지 않아요.</p><button class="btn ghost" data-act="qstart" data-v="review">복습하기</button></div>`:''}
+  ${likes.length?`<div class="card"><h3>내가 끌린 직업</h3><p class="muted">누르면 내 꿈으로 정할 수 있어요.</p><div class="chips">${likes.map(j=>`<button class="chip" data-act="dream-from-job" data-n="${esc(j.n)}">${esc(j.n)}</button>`).join('')}</div></div>`:''}
+  ${notes.length?`<div class="card"><h3>나의 배움 노트</h3>${notes.map(x=>`<p class="muted" style="margin-bottom:6px"><b>${kdate(x.date)}</b> ${esc(x.title)}${x.note?` · ${esc(x.note)}`:''}</p>`).join('')}</div>`:''}</div>`;
+}
+function questSession(){
+  if(qs.type==='explore'){
+    const j=qs.job;
+    return `<div class="stack"><div class="hero"><span class="qtag">탐색 퀘스트</span><h1 style="margin-top:8px">오늘 만난 직업</h1></div>
+    <div class="card job"><h2>${esc(j.n)}</h2><p style="margin-top:8px">${esc(j.d)}</p></div>
+    <div class="card"><div class="lab">이 직업, 어떤가요?</div><div class="btn3"><button class="btn lamp" data-act="jobr" data-v="like">끌려요</button><button class="btn ghost" data-act="jobr" data-v="ok">보통이에요</button><button class="btn ghost" data-act="jobr" data-v="no">별로예요</button></div></div>
+    <button class="link" data-act="qexit">나가기</button></div>`;
+  }
+  const it=qs.item,done=qs.right!==null;
+  const opts=qs.opts.map((o,i)=>{
+    let cls='',tag='';
+    if(qs.wrong.includes(i)){cls='wrong';tag=' · 다시 생각해 봐요'}
+    if(done&&i===qs.ans){cls='right';tag=' · 정답'}
+    return `<button class="opt ${cls}" data-act="qans" data-i="${i}" ${(done||qs.wrong.includes(i))?'disabled':''}>${esc(o)}${tag}</button>`;
+  }).join('');
+  const hint=(!done&&qs.wrong.length===1)?`<div class="hint" style="margin-top:10px">힌트: ${esc(it.hint)}</div>`:'';
+  const after=done?`<div class="learn" aria-live="polite"><b>${qs.right==='first'?'한 번에 맞혔어요!':qs.right==='retry'?'다시 생각해서 맞혔어요!':'정답을 같이 확인해요.'}</b><br>${esc(it.exp)}</div>
+    <label for="qnote" style="margin-top:14px">오늘 배운 것을 내 말로 한 줄 (선택)</label><input type="text" id="qnote" maxlength="60" placeholder="예: went는 go의 과거형이다"><button class="btn lamp block" style="margin-top:14px" data-act="qdone">퀘스트 마치기</button>`:'';
+  const aiBtn=(qs.type==='dream'&&store.sample&&!qs.ai&&!done)?`<button class="link" data-act="qai" ${qs.busy?'disabled':''}>${qs.busy?'만드는 중…':'내 꿈에 맞춰 AI가 새로 만들기'}</button>`:'';
+  return `<div class="stack"><div class="hero"><span class="qtag">${QTYPE[qs.type]}${qs.ai?' · AI':''}</span><h1 style="margin-top:8px">${esc(it.t)}</h1></div>
+  <div class="card"><div class="learn" style="margin-top:0">${esc(it.learn)}</div><p class="q" style="margin-top:14px">${esc(it.q)}</p>${opts}${hint}${after}</div>
+  ${qs.aiFail?'<p class="tiny">AI가 지금은 어려워서 준비된 문제로 계속해요.</p>':''}
+  <div class="row" style="justify-content:space-between">${aiBtn}${qs.ai&&!qs.reported?'<button class="link" data-act="qreport">내용이 이상해요</button>':''}${qs.reported?'<span class="tiny">알려 주셔서 고마워요. 선생님께 확인을 부탁해 보세요.</span>':''}<button class="link" data-act="qexit">나가기</button></div>
+  ${qs.ai?'<p class="tiny">AI가 만든 내용은 틀릴 수 있어요. 이상하면 꼭 확인해 보세요.</p>':''}</div>`;
+}
+
+/* 보상 */
+let proofD=null;
+function rwHint(){
+  const none=Object.values(S.rewards.self).every(v=>!v);
+  return (keys().length>=1&&none)?`<div class="hint">나에게 줄 보상을 정해 두면 더 힘이 나요. <button class="link" data-act="nav" data-v="reward">보상 정하러 가기</button></div>`:'';
+}
+function mileCard(){
+  if(!justSaved||!justSaved.mile)return '';
+  const m=justSaved.mile,sr=S.rewards.self[m.d];
+  return `<div class="card mile"><div class="confetti" aria-hidden="true">${Array.from({length:18},(_,i)=>`<i style="left:${(i*37)%100}%;background:var(--c${i%4});animation-delay:${(i%6)*.15}s"></i>`).join('')}</div><p class="tiny">${m.d}일 달성</p><h2>${m.d}번째 돌을 놓았어요</h2><p style="margin-top:8px">나에게 주는 보상: <b>${sr?esc(sr):'아직 정하지 않았어요'}</b></p><p>선생님 보상: <b>${esc(m.teacher)}</b> 쿠폰을 받을 수 있어요</p><button class="btn lamp" style="margin-top:12px" data-act="nav" data-v="reward">보상 화면 보기</button></div>`;
+}
+function proofCard(m){
+  const ks=keys(),when=ks[m.d-1];
+  return `<div class="proof"><p class="tiny">지당 프로젝트 · 달성 확인</p><h2>${m.d}일 달성</h2><p style="margin-top:4px"><b>${esc(S.nick)}</b> · 기록한 날 ${ks.length}번</p><p class="muted">${esc(S.goal.text)}</p><p class="muted">${m.d}번째 기록: ${when?kdate(when):''}</p><p class="tiny" style="margin-top:8px">선생님께 이 화면을 보여 주세요.</p></div>`;
+}
+let couponConfirm=null;
+function couponBlock(m,gs){
+  const c=S.rewards.coupons&&S.rewards.coupons[m.d];
+  const selfBtn=`<button class="chip ${gs?'on':''}" data-act="got" data-k="gotSelf" data-d="${m.d}" aria-pressed="${gs}">나에게 보상 줬어요</button>`;
+  if(!c)return `<div class="row" style="margin-top:12px"><button class="btn lamp" data-act="coupon-issue" data-d="${m.d}">선생님 쿠폰 받기</button>${selfBtn}</div>`;
+  const used=!!c.usedAt;
+  const fmt=ts=>{const d=new Date(ts);return kdate(ymd(d))+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+  const act=used?`<p class="stamp">사용 완료 · ${fmt(c.usedAt)}</p>`
+    :(couponConfirm===m.d?`<p class="hint" style="margin-top:8px">선생님 앞에서 눌러 주세요. 누르면 되돌릴 수 없어요.</p><div class="row" style="margin-top:8px;justify-content:center"><button class="btn" data-act="coupon-use" data-d="${m.d}">지금 사용하기</button><button class="btn ghost" data-act="coupon-cancel">취소</button></div>`
+    :`<button class="btn ghost" style="margin-top:10px" data-act="coupon-ask" data-d="${m.d}">선생님께 사용하기</button>`);
+  return `<div class="coupon ${used?'used':''}"><p class="tiny">지당 프로젝트 쿠폰</p><h2>${esc(m.teacher)}</h2><p><b>${esc(S.nick)}</b> · ${m.d}일 달성 (${kdate(keys()[m.d-1]||todayKey())})</p><p class="muted">번호 ${esc(c.serial)} · 발급 ${fmt(c.issuedAt)}</p>${act}</div><div class="row" style="margin-top:10px">${selfBtn}</div>`;
+}
+function viewReward(){
+  const n=keys().length,lv=level(n),nl=nextLevel(n);
+  const pct=nl?Math.round((n-lv.n)/(nl.n-lv.n)*100):100;
+  const lvCard=`<div class="card lvl"><p class="tiny">나의 칭호</p><h2>${esc(lv.name)}</h2><div class="bar2" aria-hidden="true"><i style="width:${pct}%"></i></div><p class="muted" style="margin-top:6px">${nl?`다음 칭호 "${esc(nl.name)}"까지 ${nl.n-n}번`:'가장 높은 칭호예요'}</p></div>`;
+  const ladder=MILES.map(m=>{
+    const reached=n>=m.d,gs=!!S.rewards.gotSelf[m.d],gt=!!S.rewards.gotTeacher[m.d];
+    return `<div class="card ms ${reached?'got':''}"><div class="row" style="justify-content:space-between"><h3 style="margin:0">${m.d}일 달성</h3><span class="pill">${reached?'달성':`${m.d-n}번 남음`}</span></div>
+    <div class="bar2" style="margin-top:10px" aria-hidden="true"><i style="width:${Math.min(100,Math.round(n/m.d*100))}%"></i></div>
+    <label for="sr${m.d}" style="margin-top:14px">나에게 주는 보상</label><input type="text" id="sr${m.d}" list="ideas" data-selfr="${m.d}" maxlength="40" value="${esc(S.rewards.self[m.d]||'')}" placeholder="예: 좋아하는 간식 먹기">
+    <p class="muted" style="margin-top:10px"><b>선생님 보상</b> ${esc(m.teacher)}</p>
+    ${reached?couponBlock(m,gs):''}</div>`;
+  }).join('');
+  return `<div class="stack"><div class="hero"><h1>보상</h1><p class="sub">기록한 날이 쌓일 때마다 열려요. 연속이 아니어도 괜찮아요. 쉬었다가 돌아와도 계속 쌓입니다.</p></div>${friendSection()}${lvCard}${ladder}<datalist id="ideas">${SELF_IDEAS.map(i=>`<option value="${i}"></option>`).join('')}</datalist></div>`;
+}
+
+/* 목표 */
+function reportCode(){
+  const ks=keys(),q=Q();
+  const last7=ks.slice(-7).map(k=>S.entries[k].energy).filter(x=>typeof x==='number');
+  const o={n:S.nick,s:S.start,r:ks.length,st:streak(),lg:longest(),lv:level(ks.length).name,q:(q.stats&&q.stats.done)||0,
+    e:last7.length?Math.round(last7.reduce((a,b)=>a+b,0)/last7.length*10)/10:0,l:ks.length?ks[ks.length-1]:'',
+    c:Object.keys((S.rewards&&S.rewards.coupons)||{}).map(d=>[Number(d),S.rewards.coupons[d].serial,S.rewards.coupons[d].issuedAt,S.rewards.coupons[d].usedAt||0]),t:Date.now()};
+  return 'JD1.'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function viewGoal(){
+  const g=S.goal,hist=S.goalHistory;
+  return `<div class="stack"><div class="hero"><h1>나의 목표</h1></div>
+  <div class="card"><p style="font-weight:600">${esc(g.text)}</p><p class="muted" style="margin-top:6px">${g.type==='count'?`하루 ${esc(g.target||'-')}${esc(unit())}`:'했는지 체크'}${g.plan&&g.plan.when?` · ${esc([g.plan.when,g.plan.where,g.plan.what].filter(Boolean).join(' · '))}`:''}</p><div class="row" style="margin-top:12px"><button class="btn ghost" data-act="edit-goal">목표 고쳐 세우기</button></div></div>
+  ${hist.length>1?`<div class="card"><h3>목표가 바뀐 기록</h3>${hist.map(h=>`<p class="muted"><b>${kdate(h.date)}</b> ${esc(h.text)}</p>`).join('')}</div>`:''}
+  <div class="card"><h3>선생님께 보내기</h3><p class="muted">내 별명, 기록한 날 수, 쿠폰 상태만 담긴 짧은 코드예요. 글 내용은 들어가지 않아요. 복사해서 선생님께 보내 보세요.</p><div class="row" style="margin-top:10px"><button class="btn ghost" data-act="rep-copy">보고 코드 복사</button></div><p class="tiny" id="repMsg" role="status"></p><textarea id="repArea" hidden readonly aria-label="보고 코드"></textarea></div>
+  <div class="card"><h3>내 기록 가져가기</h3><p class="muted">지금까지의 글을 한 번에 복사해서 블로그나 카페에 붙여 넣을 수 있어요.</p><div class="row" style="margin-top:10px"><button class="btn" data-act="copy-all">전체 기록 복사</button></div><div class="tiny" id="copyMsg" style="margin-top:8px" aria-live="polite"></div><textarea id="copyArea" readonly hidden style="margin-top:8px"></textarea></div>
+  <div class="card"><label for="nick2">별명</label><input type="text" id="nick2" data-nick="1" maxlength="12" value="${esc(S.nick)}"><p class="tiny" style="margin-top:8px">기록은 ${store.where==='계정'?'내 계정에':'이 기기에'} 저장돼요. 개인정보는 쓰지 않도록 주의해 주세요.</p></div>
+  <details class="card"><summary>처음부터 다시 하기</summary><p class="muted" style="margin-top:8px">모든 기록이 지워져요. 되돌릴 수 없어요.</p><button class="btn ghost" style="margin-top:10px" data-act="reset">모든 기록 지우기</button><div id="resetBox" style="margin-top:10px"></div></details></div>`;
+}
+
+/* ---------- 동작 ---------- */
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.ob&&ob){ob[t.dataset.ob]=t.value;if(t.dataset.ob==='goal')ob.check=null}
+  if(t.dataset.form&&form){form[t.dataset.form]=t.dataset.form==='energy'?Number(t.value):t.value}
+  if(t.dataset.nick){S.nick=t.value.trim().slice(0,12)||S.nick;save()}
+  if(t.dataset.selfr){S.rewards.self[t.dataset.selfr]=t.value.slice(0,40);save()}
+  if(t.dataset.dream&&dreamDraft){dreamDraft[t.dataset.dream]=t.value}
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.ob==='type'&&ob){ob.type=t.value;render()}
+  if(t.dataset.form==='energy'){const lo=$('#lowE');if(lo)lo.hidden=Number(t.value)!==1}
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('g[data-act="bridge-ask"]')){e.preventDefault();act('bridge-ask',e.target)}
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(b)act(b.dataset.act,b);
+});
+function err(m){const x=$('#err');if(x)x.textContent=m}
+async function act(a,b){
+  if(a==='nav'){view=b.dataset.v;qs=null;if(view!=='quest')qMsg='';justSaved=view==='today'?justSaved:null;render();window.scrollTo(0,0);return}
+  if(a==='chip'){ob[b.dataset.f]=b.dataset.v;const i=$('#'+b.dataset.f);if(i)i.value=b.dataset.v;return}
+  if(a==='ob-back'){ob.step=1;render();return}
+  if(a==='ob-check'){
+    const g=ob.goal.trim();if(g.length<4){err('목표를 먼저 적어 주세요.');return}
+    ob.busy=true;render();ob.check=await checkGoal(g);ob.busy=false;render();return;
+  }
+  if(a==='ob-next'){
+    if(ob.step===0){const n=ob.nick.trim();if(!n){err('별명을 적어 주세요.');return}ob.nick=n;ob.step=1;render();window.scrollTo(0,0);return}
+    if(ob.step===1){if(ob.goal.trim().length<4){err('목표를 적어 주세요. 짧아도 괜찮아요.');return}ob.step=2;render();window.scrollTo(0,0);return}
+  }
+  if(a==='ob-done'){
+    if(ob.type==='count'&&!(Number(ob.target)>0)){err('하루 약속한 양을 숫자로 적어 주세요.');return}
+    const t=todayKey(),text=ob.goal.trim();
+    const prev=S.goal&&S.goal.text;
+    S.nick=ob.nick.trim()||S.nick;
+    S.goal={origin:ob.origin||'self',text,type:ob.type,unit:ob.type==='count'?ob.unit.trim():'',target:ob.type==='count'?Number(ob.target):0,plan:{when:ob.when.trim(),where:ob.where.trim(),what:ob.what.trim()}};
+    if(!S.start)S.start=t;
+    if(prev!==text)S.goalHistory.push({date:t,text});
+    save();form=null;view='today';if(!S.pet&&!ob.edit){ob.step=3;render();window.scrollTo(0,0);return}ob=null;render();window.scrollTo(0,0);return;
+  }
+  if(a==='ob-mode'){ob.mode=b.dataset.v;render();window.scrollTo(0,0);return}
+  if(a==='area'){ob.area=b.dataset.v;ob.seeds=null;ob.round=0;render();return}
+  if(a==='feel'){const v=b.dataset.v;ob.feel=ob.feel.includes(v)?ob.feel.filter(x=>x!==v):ob.feel.concat(v);render();return}
+  if(a==='seed-get'){
+    if(!ob.area){err('끌리는 영역을 하나 골라 주세요.');return}
+    ob.seedBusy=true;ob.round=(ob.round||0)+1;render();
+    const r=await getSeeds(ob.area,ob.feel,ob.note,ob.round);
+    if(!ob)return;ob.seeds=r;ob.seedBusy=false;render();return;
+  }
+  if(a==='seed-pick'){
+    const x=ob.seeds.seeds[Number(b.dataset.i)];if(!x)return;
+    ob.goal=x.goal;ob.type=x.type;ob.unit=x.unit;ob.target=x.target||'';ob.origin=ob.seeds.ai?'ai':'template';ob.mode='self';ob.check=null;render();window.scrollTo(0,0);return;
+  }
+  if(a==='got'){const m=S.rewards[b.dataset.k];m[b.dataset.d]=!m[b.dataset.d];save();render();return}
+  if(a==='coupon-issue'){
+    const d=Number(b.dataset.d),m=MILES.find(x=>x.d===d);
+    if(!m||keys().length<d)return;
+    S.rewards.coupons=S.rewards.coupons||{};
+    if(!S.rewards.coupons[d]){S.rewards.coupons[d]={serial:`JD-${d}-${String(hash(S.nick+'|'+d+'|'+S.start)%9000+1000)}`,issuedAt:Date.now(),usedAt:0};save()}
+    render();return;
+  }
+  if(a==='coupon-ask'){couponConfirm=Number(b.dataset.d);render();return}
+  if(a==='coupon-cancel'){couponConfirm=null;render();return}
+  if(a==='coupon-use'){
+    const c=S.rewards.coupons&&S.rewards.coupons[b.dataset.d];
+    if(c&&!c.usedAt){c.usedAt=Date.now();couponConfirm=null;save()}
+    render();return;
+  }
+  if(a==='pet-start'){startOb(true);ob.step=3;render();window.scrollTo(0,0);return}
+  if(a==='pet-done'){
+    const sp=ob.sp||'frog';
+    S.pet={sp,name:(ob.pname||'').trim()||DEFNAME[sp],equip:{head:'',face:''},codes:{}};
+    save();ob=null;view='today';render();window.scrollTo(0,0);return;
+  }
+  if(a==='equip'){S.pet.equip[b.dataset.slot]=b.dataset.item;save();render();return}
+  if(a==='code'){
+    const v=CODE_H(($('#code').value||'').trim().toUpperCase());
+    if(!TEACHER_CODES[v])friendMsg='없는 코드예요. 쪽지를 다시 확인해 주세요.';
+    else if(S.pet.codes[v])friendMsg='이미 받은 코드예요.';
+    else{S.pet.codes[v]=1;friendMsg=`"${TEACHER_CODES[v]}"을(를) 받았어요! 위에서 꾸며 보세요.`;save()}
+    render();return;
+  }
+  if(a==='qstart'){startQuest(b.dataset.v);qMsg='';render();window.scrollTo(0,0);return}
+  if(a==='qexit'){qs=null;render();return}
+  if(a==='qans'){
+    const i=Number(b.dataset.i);
+    if(!qs||qs.right!==null||qs.wrong.includes(i))return;
+    if(i===qs.ans)qs.right=qs.wrong.length===0?'first':'retry';
+    else{qs.wrong.push(i);if(qs.wrong.length>=2)qs.right='reveal'}
+    render();return;
+  }
+  if(a==='qai'){
+    qs.busy=true;render();
+    const it=await aiLesson();
+    if(!qs)return;
+    qs.busy=false;
+    if(it){qs.item=it;Object.assign(qs,shuffled(it),{wrong:[],right:null,ai:true,aiFail:false})}else qs.aiFail=true;
+    render();return;
+  }
+  if(a==='qreport'){Q().reports++;qs.reported=true;save();render();return}
+  if(a==='qdone'){
+    if(qs.type==='review'){const rq=Q(),it=rq.review.shift();if(qs.right!=='first'&&it)rq.review.push(it);qMsg=qs.right==='first'?'복습 완료! 이제 잘 기억하고 있어요.':'다시 한 번 살펴봤어요. 나중에 또 만나요.';qs=null;save();render();window.scrollTo(0,0);return}
+    const q=Q(),t=todayKey(),bb=badges().filter(x=>x.got).map(x=>x.n),ii=S.pet?itemsOwned():[];
+    q.log[t]=q.log[t]||{};q.log[t][qs.type]=1;q.stats.done++;if(qs.right==='first')q.stats.right++;
+    q.ptr[qs.key]=(q.ptr[qs.key]||0)+1;
+    if(qs.right!=='first'){if(!q.review.some(r=>r.t===qs.item.t))q.review.push(qs.item);if(q.review.length>20)q.review.shift()}
+    const note=(($('#qnote')||{}).value||'').trim().slice(0,100);
+    q.notes.push({date:t,type:qs.type,title:qs.item.t,note});if(q.notes.length>60)q.notes=q.notes.slice(-60);
+    finishQuest(bb,ii);return;
+  }
+  if(a==='jobr'){
+    const q=Q(),t=todayKey(),bb=badges().filter(x=>x.got).map(x=>x.n),ii=S.pet?itemsOwned():[];
+    q.jobs[qs.job.n]=b.dataset.v;q.jobPtr++;q.log[t]=q.log[t]||{};q.log[t].explore=1;q.stats.done++;
+    finishQuest(bb,ii);return;
+  }
+  if(a==='dcat'){dreamDraft.cat=b.dataset.v;render();return}
+  if(a==='dgrade'){dreamDraft.grade=b.dataset.v?Number(b.dataset.v):0;render();return}
+  if(a==='dream-edit'){qEditDream=true;dreamDraft=null;render();return}
+  if(a==='dream-cancel'){qEditDream=false;dreamDraft=null;render();return}
+  if(a==='dream-save'){
+    const d=dreamDraft||{};
+    if((d.text||'').trim().length<2){err('꿈을 적어 주세요.');return}
+    if(!d.cat){err('가까운 분야를 골라 주세요.');return}
+    S.dream={text:d.text.trim(),cat:d.cat,grade:d.cat==='study'&&d.grade?Number(d.grade):0};dreamDraft=null;qEditDream=false;qMsg='꿈을 적었어요. 이제 꿈 퀘스트를 할 수 있어요!';save();render();return;
+  }
+  if(a==='dream-from-job'){const j=JOBS.find(x=>x.n===b.dataset.n);if(j){S.dream={text:j.n+' 되기',cat:j.c,from:'explore'};qMsg='"'+j.n+' 되기"를 내 꿈으로 정했어요.';save();render()}return}
+  if(a==='step'){const i=$('#val');const v=Math.max(0,(Number(i.value)||0)+Number(b.dataset.n));i.value=v;form.val=String(v);return}
+  if(a==='fill'){const i=$('#val');i.value=S.goal.target;form.val=String(S.goal.target);return}
+  if(a==='save-today'){
+    const g=S.goal;
+    if(g.type==='count'&&(form.val===''||Number(form.val)<0)){err('오늘 한 양을 적어 주세요. 0도 괜찮아요.');return}
+    if(g.type==='check'&&form.done===''){err('오늘 실천을 골라 주세요.');return}
+    if(!form.energy){err('지금 내 에너지를 골라 주세요.');return}
+    const t=todayKey(),before=badges().filter(x=>x.got).map(x=>x.n),n0=keys().length,lv0=level(n0).name,st0=stageOf(n0),it0=S.pet?itemsOwned():[],lastK=keys().filter(k=>k<t).pop();
+    const val=g.type==='count'?Number(form.val):null;
+    const done=g.type==='count'?(g.target?val>=g.target:val>0):form.done==='1';
+    S.entries[t]={val,done,energy:form.energy,note:form.note.trim(),win:form.win.trim(),ts:Date.now()};
+    save();
+    const after=badges().filter(x=>x.got).map(x=>x.n);
+    const n1=keys().length;
+    justSaved={newBadges:after.filter(n=>!before.includes(n)),mile:n1>n0?(MILES.find(m=>m.d===n1)||null):null,title:level(n1).name!==lv0?level(n1).name:null,evo:(S.pet&&stageOf(n1)>st0)?STAGES[stageOf(n1)]:null,back:!!lastK&&diffDays(lastK,t)>=2,newItems:S.pet?itemsOwned().filter(id=>!it0.includes(id)).map(id=>ITEMS.find(i=>i.id===id).name):[],fb:null};
+    form=null;render();window.scrollTo(0,0);return;
+  }
+  if(a==='edit-today'){justSaved=null;const e=S.entries[todayKey()];form={val:e.val==null?'':e.val,done:e.done?'1':'0',energy:e.energy,note:e.note||'',win:e.win||''};render();return}
+  if(a==='copy'||a==='copy-all'){
+    const text=a==='copy'?entryText(b.dataset.d):keys().slice().reverse().map(entryText).join('\n\n----------\n\n');
+    let ok=false;try{await navigator.clipboard.writeText(text);ok=true}catch(e){}
+    const m=$('#copyMsg');
+    if(ok){if(m)m.textContent='복사했어요. 원하는 곳에 붙여 넣어 보세요.'}
+    else{const ta=$('#copyArea');if(ta){ta.hidden=false;ta.value=text;ta.rows=8;ta.focus();ta.select()}if(m)m.textContent='자동 복사가 안 돼요. 아래 글을 길게 눌러 직접 복사해 주세요.'}
+    return;
+  }
+  if(a==='rep-copy'){
+    const text=reportCode();let ok=false;try{await navigator.clipboard.writeText(text);ok=true}catch(e){}
+    const m=$('#repMsg');
+    if(ok){if(m)m.textContent='복사했어요. 선생님께 붙여 넣어 보내 주세요.'}
+    else{const ta=$('#repArea');if(ta){ta.hidden=false;ta.value=text;ta.rows=4;ta.focus();ta.select()}if(m)m.textContent='자동 복사가 안 돼요. 아래 코드를 길게 눌러 복사해 주세요.'}
+    return;
+  }
+  if(a==='edit-goal'){startOb(true);render();window.scrollTo(0,0);return}
+  if(a==='bridge'){doBridge(b.dataset.d);return}
+  if(a==='bridge-ask'){
+    const d=b.dataset.d,box=$('#bridgeBox');
+    box.innerHTML=`<div class="hint">${kdate(d)}은 쉬어 갔어요. 회복권 1장으로 이어 붙일까요? (남은 회복권 ${tickets()}장)<div class="row" style="margin-top:8px"><button class="btn" data-act="bridge" data-d="${d}">이어 붙이기</button><button class="btn ghost" data-act="bridge-close">닫기</button></div></div>`;
+    return;
+  }
+  if(a==='bridge-close'){$('#bridgeBox').innerHTML='';return}
+  if(a==='ai-change'){
+    const box=$('#aiChange');box.innerHTML='<div class="skeleton"></div><div class="skeleton" style="width:60%"></div>';
+    const ks=keys().filter(k=>(S.entries[k].note||'').trim());
+    const pick=ks.slice(0,3).concat(ks.slice(-3)).map(k=>`${dayNum(k)}일차: "${scrub(S.entries[k].note)}" (에너지 ${S.entries[k].energy}${S.entries[k].val!=null?`, 양 ${S.entries[k].val}`:''})`).join('\n');
+    const r=await ask(`너는 중학생의 실천 기록을 함께 돌아보는 코치다. 목표: "${scrub(S.goal.text)}"\n처음 3편과 최근 3편의 기록:\n${pick}\n기록에 실제로 있는 근거만 써서 달라진 점을 1~3가지 짚고(changes, 각 한 문장), 학생이 스스로 답할 질문 1개를 만든다. 근거가 약하면 억지로 만들지 않는다. ${RULES}\n형식: {"changes":["..."],"question":"..."}`);
+    if(r&&Array.isArray(r.changes)&&r.question){box.innerHTML=`<p class="tiny">AI 코치가 본 달라진 점</p><ul style="margin:6px 0 0;padding-left:20px">${r.changes.slice(0,3).map(c=>`<li>${esc(c)}</li>`).join('')}</ul><p class="q" style="margin-top:10px">${esc(r.question)}</p>`}
+    else box.innerHTML='<p class="muted">지금은 AI를 사용할 수 없어요. 위의 두 글을 나란히 읽고, 달라진 점을 내 말로 한 줄 적어 보세요.</p>';
+    return;
+  }
+  if(a==='reset'){$('#resetBox').innerHTML=`<p>정말 모두 지울까요?</p><div class="row" style="margin-top:8px"><button class="btn" data-act="reset-yes">네, 지울게요</button><button class="btn ghost" data-act="reset-no">아니요</button></div>`;return}
+  if(a==='reset-no'){$('#resetBox').innerHTML='';return}
+  if(a==='reset-yes'){S=blank();ob=null;form=null;justSaved=null;view='today';save();render();return}
+}
+function finishQuest(bb,ii){
+  const nb=badges().filter(x=>x.got&&!bb.includes(x.n)).map(x=>x.n);
+  const ni=S.pet?itemsOwned().filter(id=>!ii.includes(id)).map(id=>ITEMS.find(i=>i.id===id).name):[];
+  qMsg='퀘스트를 마쳤어요!'+(nb.length?` 새 배지: ${nb.join(', ')}.`:'')+(ni.length?` 새 꾸미기: ${ni.join(', ')}.`:'');
+  qs=null;save();render();window.scrollTo(0,0);
+}
+function doBridge(d){
+  if(tickets()<=0||S.entries[d]||S.bridges[d])return;
+  S.bridges[d]=1;S.used++;save();render();
+}
+init();
+</script>
+</body>
+</html>
