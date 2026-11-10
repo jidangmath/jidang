@@ -223,7 +223,25 @@ async function flush(){
   try{await store.doc.set(JSON.parse(JSON.stringify(S)))}catch(e){}
   finally{writing=false; if(dirty)flush()}
 }
+const SYNC='jidang.sync';
+function syncCfg(){try{const c=JSON.parse(localStorage.getItem(SYNC)||'null');return c&&c.u&&c.k?c:null}catch(e){return null}}
+function readHash(){
+  try{
+    const h=(location.hash||'').replace(/^#/,'');if(!h)return;
+    const q=new URLSearchParams(h),u=q.get('s'),k=q.get('k');
+    if(u&&k&&/^https:\/\/script\.google\.com\//.test(u)){localStorage.setItem(SYNC,JSON.stringify({u,k}));history.replaceState(null,'',location.pathname+location.search)}
+  }catch(e){}
+}
+let sendMsg='';
+async function sendReport(quiet){
+  const c=syncCfg();if(!c)return false;
+  try{
+    await fetch(c.u,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({k:c.k,c:reportCode()})});
+    S.sentAt=Date.now();save();if(!quiet)sendMsg='보냈어요. 선생님 화면에 곧 보여요.';return true;
+  }catch(e){if(!quiet)sendMsg='지금은 보낼 수 없어요. 인터넷을 확인하고 다시 눌러 주세요.';return false}
+}
 async function init(){
+  readHash();
   try{S=JSON.parse(localStorage.getItem(LS)||'null')}catch(e){}
   S=Object.assign(blank(),S||{});
   render();
@@ -945,7 +963,7 @@ function viewGoal(){
   return `<div class="stack"><div class="hero"><h1>나의 목표</h1></div>
   <div class="card"><p style="font-weight:600">${esc(g.text)}</p><p class="muted" style="margin-top:6px">${g.type==='count'?`하루 ${esc(g.target||'-')}${esc(unit())}`:'했는지 체크'}${g.plan&&g.plan.when?` · ${esc([g.plan.when,g.plan.where,g.plan.what].filter(Boolean).join(' · '))}`:''}</p><div class="row" style="margin-top:12px"><button class="btn ghost" data-act="edit-goal">목표 고쳐 세우기</button></div></div>
   ${hist.length>1?`<div class="card"><h3>목표가 바뀐 기록</h3>${hist.map(h=>`<p class="muted"><b>${kdate(h.date)}</b> ${esc(h.text)}</p>`).join('')}</div>`:''}
-  <div class="card"><h3>선생님께 보내기</h3><p class="muted">내 별명, 기록한 날 수, 쿠폰 상태만 담긴 짧은 코드예요. 글 내용은 들어가지 않아요. 복사해서 선생님께 보내 보세요.</p><div class="row" style="margin-top:10px"><button class="btn ghost" data-act="rep-copy">보고 코드 복사</button></div><p class="tiny" id="repMsg" role="status"></p><textarea id="repArea" hidden readonly aria-label="보고 코드"></textarea></div>
+  <div class="card"><h3>선생님께 보내기</h3><p class="muted">내 별명, 기록한 날 수, 쿠폰 상태만 보내요. 쓴 글은 보내지 않아요.</p>${syncCfg()?`<div class="row" style="margin-top:10px"><button class="btn" data-act="rep-send">지금 보내기</button></div><label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" data-auto="1" ${S.autoSend?'checked':''}> 기록을 저장할 때마다 자동으로 보내기</label><p class="tiny">${S.sentAt?'마지막으로 보낸 때: '+kdate(ymd(new Date(S.sentAt))):'아직 보낸 적 없어요'}</p><p class="tiny" role="status">${esc(sendMsg)}</p>`:''}<div class="row" style="margin-top:10px"><button class="btn ghost" data-act="rep-copy">${syncCfg()?'코드로 직접 보내기':'보고 코드 복사'}</button></div><p class="tiny" id="repMsg" role="status"></p><textarea id="repArea" hidden readonly aria-label="보고 코드"></textarea></div>
   <div class="card"><h3>내 기록 가져가기</h3><p class="muted">지금까지의 글을 한 번에 복사해서 블로그나 카페에 붙여 넣을 수 있어요.</p><div class="row" style="margin-top:10px"><button class="btn" data-act="copy-all">전체 기록 복사</button></div><div class="tiny" id="copyMsg" style="margin-top:8px" aria-live="polite"></div><textarea id="copyArea" readonly hidden style="margin-top:8px"></textarea></div>
   <div class="card"><label for="nick2">별명</label><input type="text" id="nick2" data-nick="1" maxlength="12" value="${esc(S.nick)}"><p class="tiny" style="margin-top:8px">기록은 ${store.where==='계정'?'내 계정에':'이 기기에'} 저장돼요. 개인정보는 쓰지 않도록 주의해 주세요.</p></div>
   <details class="card"><summary>처음부터 다시 하기</summary><p class="muted" style="margin-top:8px">모든 기록이 지워져요. 되돌릴 수 없어요.</p><button class="btn ghost" style="margin-top:10px" data-act="reset">모든 기록 지우기</button><div id="resetBox" style="margin-top:10px"></div></details></div>`;
@@ -956,6 +974,7 @@ document.addEventListener('input',e=>{
   const t=e.target;
   if(t.dataset.ob&&ob){ob[t.dataset.ob]=t.value;if(t.dataset.ob==='goal')ob.check=null}
   if(t.dataset.form&&form){form[t.dataset.form]=t.dataset.form==='energy'?Number(t.value):t.value}
+  if(t.dataset.auto){S.autoSend=t.checked;save()}
   if(t.dataset.nick){S.nick=t.value.trim().slice(0,12)||S.nick;save()}
   if(t.dataset.selfr){S.rewards.self[t.dataset.selfr]=t.value.slice(0,40);save()}
   if(t.dataset.dream&&dreamDraft){dreamDraft[t.dataset.dream]=t.value}
@@ -1096,7 +1115,9 @@ async function act(a,b){
     const after=badges().filter(x=>x.got).map(x=>x.n);
     const n1=keys().length;
     justSaved={newBadges:after.filter(n=>!before.includes(n)),mile:n1>n0?(MILES.find(m=>m.d===n1)||null):null,title:level(n1).name!==lv0?level(n1).name:null,evo:(S.pet&&stageOf(n1)>st0)?STAGES[stageOf(n1)]:null,back:!!lastK&&diffDays(lastK,t)>=2,newItems:S.pet?itemsOwned().filter(id=>!it0.includes(id)).map(id=>ITEMS.find(i=>i.id===id).name):[],fb:null};
-    form=null;render();window.scrollTo(0,0);return;
+    form=null;render();window.scrollTo(0,0);
+    if(S.autoSend&&syncCfg())sendReport(true);
+    return;
   }
   if(a==='edit-today'){justSaved=null;const e=S.entries[todayKey()];form={val:e.val==null?'':e.val,done:e.done?'1':'0',energy:e.energy,note:e.note||'',win:e.win||''};render();return}
   if(a==='copy'||a==='copy-all'){
@@ -1107,6 +1128,7 @@ async function act(a,b){
     else{const ta=$('#copyArea');if(ta){ta.hidden=false;ta.value=text;ta.rows=8;ta.focus();ta.select()}if(m)m.textContent='자동 복사가 안 돼요. 아래 글을 길게 눌러 직접 복사해 주세요.'}
     return;
   }
+  if(a==='rep-send'){sendMsg='보내는 중…';render();await sendReport();render();return}
   if(a==='rep-copy'){
     const text=reportCode();let ok=false;try{await navigator.clipboard.writeText(text);ok=true}catch(e){}
     const m=$('#repMsg');
